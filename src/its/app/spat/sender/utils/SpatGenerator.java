@@ -95,7 +95,8 @@ public final class SpatGenerator extends Thread {
 			spatKmlPoint = spatKml[1].split("\\.");
 			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
 			System.out.println("entro en sending" );
-			byte [][] response=client.sending(arrayTLtopo,intersectionId);
+			byte [][] response=null;
+			while(response==null){ response=client.sending(arrayTLtopo,intersectionId);}
 			for (int i = 0; i < response.length; i++) {
 				arrayTLtopo[i]=response[i][0];
 			}

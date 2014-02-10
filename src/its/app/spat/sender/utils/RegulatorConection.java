@@ -1,18 +1,18 @@
 package its.app.spat.sender.utils;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
+//import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+//import java.nio.ByteOrder;
 import java.util.TimerTask;
 
 import javax.swing.Timer;
@@ -107,7 +107,7 @@ public class RegulatorConection {
 	public  int listener_ack() throws IOException {
 		//int length=0;
 		byte[] message = new byte[1000];
-		byte[] msg=new byte[7];
+	//	byte[] msg=new byte[7];
 		//timer1.stop();
 		in=requestSocket.getInputStream();
 		int length = in.read(message);                  // read length of incoming message
@@ -150,14 +150,22 @@ public class RegulatorConection {
 	byte[][] listener_response(int[] tl) throws IOException{
 		//System.out.println("entro no listener_response");
 		byte[] message = new byte[1000];
+		in=requestSocket.getInputStream();
 		int length=in.read(message);                  // read length of incoming message
-	//	if(length>0) {
+		//if(length>0) {
 			/**for (int i = 0; i < length; i++) {
 				System.out.println(message[i]);
 			}**/
+		
+		boolean desired=message[0]==0x2& (message[6]==0x03) & (message[3]==ACK);
+		if (desired ==true){
+			System.out.println("ack recibido");
+			length=in.read(message);
+		}
 			byte[][]message_response=new byte[tl.length][8];
-			boolean desired=message[3]==0x02;
+			desired=message[0]==0x02& (message[3]==2);
 			//in.read(message, 0, message.length);
+			while (desired==false){return null;}
 			if (desired==true){
 				isRunning=true;//con first==1??
 				//listen.interrupted();
@@ -171,7 +179,7 @@ public class RegulatorConection {
 				
 				byte[] msg=createACK((byte)2,(byte)result);
 				sendMessage(msg);
-				int i=0;int next_pos=0;int old_pos=0;boolean well=false;int j=0;
+				int i=0;int next_pos=0;int old_pos=0;
 				while(i<tl.length){	
 			//		System.out.println("que collo "+tl[i]+" "+message[4+8 +next_pos]);
 					//	j=i;
@@ -188,7 +196,7 @@ public class RegulatorConection {
 						message_response[i][6]=message[4+15+ next_pos];
 						message_response[i][7]=message[4+16+ next_pos];
 					next_pos=((int)message[9+4+old_pos]*7) +2+old_pos;
-					old_pos=next_pos;well=true;
+					old_pos=next_pos;
 				//	}
 					//	j=(j+1)%(tl.length-1);
 					//	}
@@ -196,6 +204,7 @@ public class RegulatorConection {
 				}}
 			
 			return(message_response);
+		
 		//}else listener_response(tl);
 
 	}
@@ -264,7 +273,7 @@ public class RegulatorConection {
 
 			//timer1.notify();
 
-			while(listener_ack()==1){}
+			//while(listener_ack()==1){}
 			//thread1.setPriority(Thread.MIN_PRIORITY);
 			//thread1.start();
 			//thread1.notifyAll();
@@ -273,12 +282,11 @@ public class RegulatorConection {
 			//synchronize
 		//	this.notify();
 		//	timer2.start();
-			System.out.println("volvin de ack");
 		/**	for (int i = 0; i < arrayTLtopo.length; i++) {
 				System.out.println("tl"+arrayTLtopo[i]);
 			}**/
 			byte[][] message_end=listener_response(arrayTLtopo);
-			
+			if (message_end==null){requestSocket.close();return null;}
 			//Thread listen_t=new Thread(new listen_and_ack());
 			//if (first1==0)listen.start();isRunning=true;
 			first1=1;
@@ -300,7 +308,7 @@ public class RegulatorConection {
 		byte[][] message_end={{0x01,rr,aa[0],aa[1],0x04,0x05,0x06,0x07},{0x01,rs,aa[0],aa[1],0x04,0x05,0x06,0x07}};
 		//proba. cambiar por message_end=null; cando remate	
 		System.out.println("MALA CONEXION");
-		return (message_end);
+		return null;
 
 	}
 
