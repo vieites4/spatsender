@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/**|**/CVS/**" including="**/*.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.knopflerfish.eclipse.core.EXECUTION_ENVIRONMENT_CONTAINER"/>
+	<classpathentry kind="con" path="org.knopflerfish.eclipse.core.FRAMEWORK_CONTAINER">
+		<accessrules>
+			<accessrule kind="accessible" pattern="org/osgi/util/tracker/"/>
+			<accessrule kind="accessible" pattern="org/osgi/framework/"/>
+			<accessrule kind="nonaccessible" pattern="**/*"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/ItsMessagesAPI"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/POTI_API"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/VDP_API"/>
+	<classpathentry kind="lib" path="/home/ctag/uc2x_dev/runtime_env/osgi/jars/uc2x/others/slf4j/com.springsource.slf4j.api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="jsoup-1.7.3.jar"/>
+	<classpathentry kind="con" path="org.knopflerfish.eclipse.core.BUNDLE_CONTAINER/ItsMessagesAPI">
+		<accessrules>
+			<accessrule kind="accessible" pattern="its/fac/messages/api/enums/"/>
+			<accessrule kind="accessible" pattern="its/fac/messages/api/types/"/>
+			<accessrule kind="accessible" pattern="its/fac/messages/api/exceptions/"/>
+			<accessrule kind="accessible" pattern="its/fac/messages/api/services/"/>
+			<accessrule kind="nonaccessible" pattern="**/*"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="output" path="out"/>
+</classpath>

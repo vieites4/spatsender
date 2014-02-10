@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ClassPath: ., jsoup-1.7.3.jar
+Bundle-Version: 1.0.0
+Bundle-Name: SPATSender
+Bundle-ManifestVersion: 2
+Bundle-Activator: its.app.spat.sender.bundle.Activator
+Bundle-SymbolicName: SPATSender
+Import-Package: org.osgi.framework, org.osgi.util.tracker, its.fac.mes
+ sages.api.services, its.fac.messages.api.exceptions, its.fac.messages
+ .api.types, org.slf4j, javax.xml.parsers, org.xml.sax.helpers, org.xm
+ l.sax, its.fac.messages.api.enums, javax.swing
+
