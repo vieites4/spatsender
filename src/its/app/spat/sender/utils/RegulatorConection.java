@@ -212,7 +212,6 @@ public class RegulatorConection {
 
 
 	public  byte[][] sending(int[] arrayTLtopo,int intersectionId) throws InterruptedException {
-		try {
 			arrayGlobal= arrayTLtopo;
 			intersectionIdGlobal=intersectionId;
 
@@ -221,9 +220,17 @@ public class RegulatorConection {
 			/*for (int i = 0; i < arrayTLtopo.length; i++) {
 				System.out.println("arrayTLtopo "+arrayTLtopo[i]);
 			} */
-
-			if (requestSocket==null)requestSocket = new Socket("195.77.187.234", 21000);else
-				if (requestSocket.isClosed())requestSocket = new Socket("195.77.187.234", 21000);
+boolean connect=false;
+			while(!connect){
+				try {
+					if (requestSocket==null) requestSocket = new Socket("195.77.187.234", 21000);else
+					if (requestSocket.isClosed())requestSocket = new Socket("195.77.187.234", 21000);
+					out = new ObjectOutputStream(requestSocket.getOutputStream());
+					connect=true;
+				} catch (IOException e) {
+					System.out.println("conexion imposible");
+				}
+			}
 				//listener.
 
 			//requestSocket.close();
@@ -237,7 +244,7 @@ public class RegulatorConection {
 			//in = new InputStreamReader(System.in);
 			
 		//	br = new BufferedReader(in);
-			out = new ObjectOutputStream(requestSocket.getOutputStream());
+		
 			//out.flush();
 			//in = new ObjectInputStream(requestSocket.getInputStream());
 			byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); //porque 0x55
@@ -247,8 +254,8 @@ public class RegulatorConection {
 			System.out.println("msg sent");
 
 			// aqui vai o temporizador de 10 segundos
-			BufferedReader inFromServer=null;
-			inFromServer=new BufferedReader(new InputStreamReader(requestSocket.getInputStream()));
+		//	BufferedReader inFromServer=null;
+	//		inFromServer=new BufferedReader(new InputStreamReader(requestSocket.getInputStream()));
 			
 			
 		/**	Timer timer1 = new Timer (10000, new ActionListener () 
@@ -285,30 +292,33 @@ public class RegulatorConection {
 		/**	for (int i = 0; i < arrayTLtopo.length; i++) {
 				System.out.println("tl"+arrayTLtopo[i]);
 			}**/
-			byte[][] message_end=listener_response(arrayTLtopo);
-			if (message_end==null){requestSocket.close();return null;}
+			byte[][] message_end=null;
+			try {
+				message_end=listener_response(arrayTLtopo);
+			if (message_end==null){
+				requestSocket.close();return null;}
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//Thread listen_t=new Thread(new listen_and_ack());
 			//if (first1==0)listen.start();isRunning=true;
 			first1=1;
 			//return valores
 		//	requestSocket.close();
+			
 			return(message_end);
-		} catch (UnknownHostException unknownHost) {
-			System.out.println("You are trying to connect to an unknown host!");
-		} catch (IOException ioException) {
-			System.out.println("Imposible conection!!");
-			//ioException.printStackTrace();
-		}
 		//proba	
 
-		int time0=0;
+	/**	int time0=0;
 		String num=Integer.toString(time0);
 		byte[] aa=num.getBytes();
 		byte rr='R';byte rs='A';
-		byte[][] message_end={{0x01,rr,aa[0],aa[1],0x04,0x05,0x06,0x07},{0x01,rs,aa[0],aa[1],0x04,0x05,0x06,0x07}};
+		//byte[][] message_end={{0x01,rr,aa[0],aa[1],0x04,0x05,0x06,0x07},{0x01,rs,aa[0],aa[1],0x04,0x05,0x06,0x07}};
 		//proba. cambiar por message_end=null; cando remate	
 		System.out.println("MALA CONEXION");
-		return null;
+		//return null;**/
 
 	}
 
