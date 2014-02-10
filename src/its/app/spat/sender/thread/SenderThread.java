@@ -125,7 +125,7 @@ public class SenderThread extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
+			}//asdfasdf
 			try {
 				long timeToSleep = (long) (Double
 						.parseDouble(Activator.spatFrequency) - (System
