@@ -52,7 +52,7 @@ public final class SpatGenerator extends Thread {
 		public Spat generateSpatMessage(	ItsMessagesSenderService itsMessagesSenderService, String[] strTLTopo)
 				throws ValueOutOfRangeException, InterruptedException {
 
-			System.out.println("entro en generateSpatMessage" );
+		//	System.out.println("entro en generateSpatMessage" );
 
 			long[][] kml=  {
 					{ 0x01     ,0x02     ,0x04    , 0x08},
@@ -94,7 +94,7 @@ public final class SpatGenerator extends Thread {
 			spatKml = Activator.spatKML.split("/");
 			spatKmlPoint = spatKml[1].split("\\.");
 			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
-			System.out.println("entro en sending" );
+			//System.out.println("entro en sending" );
 			byte [][] response=null;
 			while(response==null){ response=client.sending(arrayTLtopo,intersectionId);}
 			for (int i = 0; i < response.length; i++) {
@@ -163,7 +163,7 @@ public final class SpatGenerator extends Thread {
 					else if(response[i][1]== 'R'|| response[i][1]== 'S')colortl1=0x4;	
 
 				}
-				System.out.println("rellena laneset");
+			//	System.out.println("rellena laneset");
 				movementstate.get(i).setMovementName("STATE"+"+i+");// no es necesario
 				/**for (int j = 0; j < laneset.length; j++) {
 					System.out.println(laneset[j] );
@@ -181,7 +181,7 @@ public final class SpatGenerator extends Thread {
 				
 				movementstate.get(i).setLaneSet(laneset1);
 				movementstate.get(i).setCurrState(colortl1);
-				System.out.println("tiempos "+response[i][2]+" "+ response[i][3]+" "+ response[i][4]+" "+ response[i][5]);
+				//System.out.println("tiempos "+response[i][2]+" "+ response[i][3]+" "+ response[i][4]+" "+ response[i][5]);
 				byte[] b={response[i][2],response[i][3]}; //correcto para os casos que non sexa -1, como se faría noutro caso??
 				int sum1=response[i][3]&(0xff);
 				int sum2= response[i][2]&(0xff);
@@ -204,12 +204,12 @@ public final class SpatGenerator extends Thread {
 			spat.setIntersectionState(intersectionstate);
 			
 int len=spat.getIntersectionState().get(0).getMovementState().size();
-for (int j = 0; j < len; j++) {
-	System.out.println("Para i= "+j+" "+spat.getIntersectionState().get(0).getMovementState().get(j).getTimeToChange()+" "+
-	spat.getIntersectionState().get(0).getMovementState().get(j).getCurrState()+" "+
-	spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
+/**for (int j = 0; j < len; j++) {
+	//	System.out.println("Para i= "+j+" "+spat.getIntersectionState().get(0).getMovementState().get(j).getTimeToChange()+" "+
+	//spat.getIntersectionState().get(0).getMovementState().get(j).getCurrState()+" "+
+	//spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
 	
-}
+}**/
 			return spat;
 			//System.out.println("NOOOOO");
 			//	}

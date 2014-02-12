@@ -365,23 +365,19 @@ public final class TLTopology {
 		for (int i = 0; i < movements.length; i++) {
 			 System.out.println(movements[i]); //
 			// TURN-TLIFTURN-TURN-TLIFTURN-TURN-TLIFTURN
-			 System.out.println(tableOfEgress[i]);
+			 //System.out.println(tableOfEgress[i]);
 			String[] movementstl = movements[i].split("-");
 			for (int j = 0; j < movementstl.length; j++) {
 				if (j % 2 == 1) {
 					if (!movementstl[j].equalsIgnoreCase("0")) {
 						if (movementstl[j - 1].equalsIgnoreCase("R")) {
 							if (i == movements.length-1) {
-								System.out.println("tl= " + movementstl[j]
-										+ " Egressapproach= "
-										+ tableOfEgress[0]);
+							//	System.out.println("tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[0]);
 								egresstl[contTurnsTl] = movementstl[j] + ";"
 										+ tableOfEgress[0];
 								contTurnsTl++;
 							} else {
-								System.out.println("tl= " + movementstl[j]
-										+ " Egressapproach= "
-										+ tableOfEgress[i + 1]);
+								//System.out.println("tl= " + movementstl[j]+" Egressapproach= "	+ tableOfEgress[i + 1]);
 								egresstl[contTurnsTl] = movementstl[j] + ";"
 										+ tableOfEgress[i + 1];
 								contTurnsTl++;
@@ -389,16 +385,12 @@ public final class TLTopology {
 
 						} else if (movementstl[j - 1].equalsIgnoreCase("L")) {
 							if (i == 0) {
-								System.out.println(" tl= " + movementstl[j]
-										+ " Egressapproach= "
-										+ tableOfEgress[movements.length-1]);
+							//	System.out.println(" tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[movements.length-1]);
 								egresstl[contTurnsTl] = movementstl[j] + ";"
 										+ tableOfEgress[movements.length-1];
 								contTurnsTl++;
 							} else {
-								System.out.println("tl= " + movementstl[j]
-										+ " Egressapproach= "
-										+ tableOfEgress[i - 1]);
+							//	System.out.println("tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[i - 1]);
 								egresstl[contTurnsTl] = movementstl[j] + ";"
 										+ tableOfEgress[i - 1];
 								contTurnsTl++;

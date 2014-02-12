@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 	private ServiceTracker itsMessagesSenderServiceTracker = null;
 
 	public SenderThread senderThread;
-
+public static volatile String spatRegIp="192.168.1.5";
 	public static volatile String spatFrequency = "2000";
 	public static volatile String spatKML = "kml/001.kml";
 
@@ -35,6 +35,9 @@ public class Activator implements BundleActivator {
 		
 		if (System.getProperty("spat.spatKML") != null) {
 			spatKML = System.getProperty("spat.spatKML");
+		}
+		if (System.getProperty("spat.spatRegIp") != null) {
+			spatRegIp = System.getProperty("spat.spatRegIp");
 		}
 
 		this.senderThread = new SenderThread(paramBundleContext);

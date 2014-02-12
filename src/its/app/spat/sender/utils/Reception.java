@@ -25,7 +25,7 @@ public class Reception {
 
             } else {
 
-                System.out.println(" No response!!");
+               // System.out.println(" No response!!");
                 return null;
 
             }

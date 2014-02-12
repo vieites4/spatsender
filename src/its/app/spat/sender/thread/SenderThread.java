@@ -45,9 +45,9 @@ public class SenderThread extends Thread {
 		try {
 			strTLTopo= this.tlTopology.generateTLTopology(Activator.spatKML);
 			
-			for (int i = 0; i < strTLTopo.length; i++) {
+		/**	for (int i = 0; i < strTLTopo.length; i++) {
 				System.out.println(strTLTopo[i]);
-			}
+			}**/
 			
 			
 		} catch (ValueOutOfRangeException e) {
@@ -109,13 +109,12 @@ public class SenderThread extends Thread {
 				try {
 					
 					Spat spat = this.spatGenerator.generateSpatMessage(
-							itsMessagesSenderService, strTLTopo);
-					
+							itsMessagesSenderService, strTLTopo);		
 					
 					
 					if (spat != null) {	itsMessagesSenderService.send(spat);
 						logger.info("SPATSender: spat messages has been sent to GNBTPAPI on BTP port " + spat.toString());
-					}else {System.out.println("spat==null");}
+					}//else {System.out.println("spat==null");}
 				} catch (MessageIncompleteException e) {
 					logger.error("SPATSender: error sending spat messages "	+ e.getMessage());
 				} catch (ValueOutOfRangeException e) {
@@ -125,7 +124,7 @@ public class SenderThread extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}//asdfasdf
+			}
 			try {
 				long timeToSleep = (long) (Double
 						.parseDouble(Activator.spatFrequency) - (System
@@ -146,6 +145,6 @@ public class SenderThread extends Thread {
 //		tl1.stopTL();
 //		tl2.stopTL();
 //		tl3.stopTL();
-		System.out.println("Stopping sending SPAT");
+		//System.out.println("Stopping sending SPAT");
 	}
 }

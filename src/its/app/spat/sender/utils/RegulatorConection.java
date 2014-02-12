@@ -2,6 +2,8 @@ package its.app.spat.sender.utils;
 
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
+import its.app.spat.sender.bundle.Activator;
+
 import java.io.BufferedReader;
 //import java.io.FileInputStream;
 import java.io.IOException;
@@ -84,12 +86,12 @@ public class RegulatorConection {
 		public synchronized void run() {
 
 			try {
-				System.out.println("ENTRO NA TASK!");
+				//	System.out.println("ENTRO NA TASK!");
 				//list_t.interrupt();//list_t.stop();
 			//	list_thread.Continue=false;
 				requestSocket.close();
 			//	new Thread(list_thread).
-				System.out.println("Pechei a conexión!");
+				//	System.out.println("Pechei a conexión!");
 		//		this.notify();
 				sending(arrayGlobal,intersectionIdGlobal);
 			} catch (IOException e) {
@@ -118,7 +120,7 @@ public class RegulatorConection {
 			//& (message[5]==0x1) 
 			boolean desired=true;//(message[0]==0x2); // & (message[6]==0x03) ;//& (message[3]==ACK)
 			if (desired ==true){
-				System.out.println("ack recibido");
+				//	System.out.println("ack recibido");
 				
 		//if(in.ready()) mesa//recep.put(in.toString().toCharArray());
 		//char[] message=recep.get();
@@ -126,7 +128,8 @@ public class RegulatorConection {
 		// read length of incoming message
 		
 	//	if(length>0) {
-
+//Timer timer=new Timer(10000,null);
+//timer.
 			//br.read(message, 0, message.length);
 			//boolean desired=message[3]==ACK;		
 		//	if (desired==true){
@@ -187,11 +190,11 @@ public class RegulatorConection {
 						
 					//	if(message[4+8 +next_pos]==tl[j]){
 					
-						message_response[i][0]=message[4+8 +next_pos];System.out.println("grupo "+message[4+8+ next_pos]);
-						message_response[i][1]=message[4+10 + next_pos];System.out.println("color "+message[4+10 + next_pos]);
-						message_response[i][2]=message[4+11+ next_pos];System.out.println("veo2 "+message[4+11+ next_pos]);
-						message_response[i][3]=message[4+12+ next_pos];System.out.println("veo2 "+message[4+12+ next_pos]);
-						message_response[i][4]=message[4+13+ next_pos];System.out.println("voeo-1? "+message[4+13+ next_pos]);
+						message_response[i][0]=message[4+8 +next_pos];//System.out.println("grupo "+message[4+8+ next_pos]);
+						message_response[i][1]=message[4+10 + next_pos];//System.out.println("color "+message[4+10 + next_pos]);
+						message_response[i][2]=message[4+11+ next_pos];//System.out.println("veo2 "+message[4+11+ next_pos]);
+						message_response[i][3]=message[4+12+ next_pos];//System.out.println("veo2 "+message[4+12+ next_pos]);
+						message_response[i][4]=message[4+13+ next_pos];//System.out.println("voeo-1? "+message[4+13+ next_pos]);
 						message_response[i][5]=message[4+14+ next_pos];
 						message_response[i][6]=message[4+15+ next_pos];
 						message_response[i][7]=message[4+16+ next_pos];
@@ -223,22 +226,26 @@ public class RegulatorConection {
 boolean connect=false;
 			while(!connect){
 				try {
-					if (requestSocket==null) requestSocket = new Socket("195.77.187.234", 21000);else
-					if (requestSocket.isClosed())requestSocket = new Socket("195.77.187.234", 21000);
+		           // wait////"195.77.187.234"
+					//System.out.println(Activator.spatRegIp);
+					if (requestSocket==null) requestSocket = new Socket(Activator.spatRegIp, 21000);else
+					if (requestSocket.isClosed())requestSocket = new Socket(Activator.spatRegIp, 21000);
 					out = new ObjectOutputStream(requestSocket.getOutputStream());
 					connect=true;
 				} catch (IOException e) {
 					System.out.println("conexion imposible");
+					Thread.sleep(3000);
 				}
 			}
 				//listener.
-
+String s="19.5";
+int i=s.indexOf(".");
+System.out.println(Integer.parseInt(s.substring(0,i)));
 			//requestSocket.close();
 			//	Socket connection = requestSocket.accept();
 			//list_thread=new listener(requestSocket);
 			//list_t= new Thread(list_thread);
 			//list_t.start();
-			System.out.println("Connected to host in port 13500");
 			// // Get Input and Output streams
 			//
 			//in = new InputStreamReader(System.in);
@@ -248,10 +255,10 @@ boolean connect=false;
 			//out.flush();
 			//in = new ObjectInputStream(requestSocket.getInputStream());
 			byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); //porque 0x55
-			System.out.println("Create petition");
+		//	System.out.println("Create petition");
 			isRunning=false;//listen.interrupt();
 			sendMessage(msg);
-			System.out.println("msg sent");
+			//	System.out.println("msg sent");
 
 			// aqui vai o temporizador de 10 segundos
 		//	BufferedReader inFromServer=null;
