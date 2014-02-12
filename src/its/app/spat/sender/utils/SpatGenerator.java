@@ -126,10 +126,6 @@ public final class SpatGenerator extends Thread {
 				response[i][3]=res[1];//System.out.println("veo2 "+message[4+12+ next_pos]);
 				
 			}
-			
-			
-
-
 			//client.
 
 			for (int i = 0; i < response.length; i++) {
@@ -203,6 +199,7 @@ public final class SpatGenerator extends Thread {
 				/**for (int j = 0; j < laneset.length; j++) {
 					System.out.println(laneset[j] );
 				}**/
+				//
 				int a=1;int ii=0;
 				while(a==1){
 					if(laneset[i][ii]==0)a=0;
