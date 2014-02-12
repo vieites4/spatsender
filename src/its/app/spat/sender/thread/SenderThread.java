@@ -125,6 +125,8 @@ public class SenderThread extends Thread {
 					e.printStackTrace();
 				}
 			}
+			
+			//esta parte é a que facia que esperásemos 0.5 segundos entre execucions do generateSpatMessage. Agora executarase continuamente.
 			try {
 				long timeToSleep = (long) (Double
 						.parseDouble(Activator.spatFrequency) - (System
