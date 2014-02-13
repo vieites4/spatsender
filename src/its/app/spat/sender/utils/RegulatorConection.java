@@ -1,35 +1,28 @@
 package its.app.spat.sender.utils;
-
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
 import its.app.spat.sender.bundle.Activator;
-
+//import its.app.spat.sender.thread.*;
 import java.io.BufferedReader;
-//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-//import java.io.ObjectInputStream;
+//import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-//import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
-
 import javax.swing.Timer;
-
-//import javax.swing.Timer;
 public class RegulatorConection extends Thread  {
 	//Timer timer100;
 	int first=0;
 	public byte[][] message_end;
 	public List<typeTemp> List_temp=new ArrayList<typeTemp> ();
 	public List<Integer> List_ID=new ArrayList<Integer> ();
+	public int intersectionId;
+	public int[] arrayTLtopo;
+	private boolean connect=true;
 	Timer timer1,timer2;
-	Socket requestSocket=null;
+	Socket requestSocket=null;//=new Socket();
 	ObjectOutputStream out;
 	listener list_thread;
 	boolean newConnection;
@@ -44,12 +37,12 @@ public class RegulatorConection extends Thread  {
 	Functions functions = new Functions();
 	byte ACK=0x06;
 	int first1=0;
-	//public RegulatorConection() {
-		// RegulatorConection client = new RegulatorConection();
+	public RegulatorConection() {
+		//RegulatorConection client = new RegulatorConection();
 		// client.run();
-		//isRunning = true;
+		isRunning = true;
 		// sending();
-	//}
+	}
 	/** **/
 	/**	Timer timer1 = new Timer (10000, new ActionListener () 
 	{ 
@@ -70,17 +63,8 @@ public class RegulatorConection extends Thread  {
 			// timer100.cancel();
 			try {//timer2.stop();
 				requestSocket.close();
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				//	e.printStackTrace();
-			}
-			try {
-				main(arrayGlobal,intersectionIdGlobal);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} catch (IOException e) {			}
+			run();
 		}
 	};
 	TimerTask timer10 = new TimerTask()
@@ -90,55 +74,33 @@ public class RegulatorConection extends Thread  {
 		 * a los observadores de este modelo.
 		 */
 		public synchronized void run() {
-
 			try {
-				//	System.out.println("ENTRO NA TASK!");
-				//list_t.interrupt();//list_t.stop();
-				//	list_thread.Continue=false;
 				requestSocket.close();
 				//	new Thread(list_thread).
 				//	System.out.println("Pechei a conexión!");
 				//		this.notify();
-				main(arrayGlobal,intersectionIdGlobal);
+				run();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
 			}
 		}
 	};
 	Reception recep;
 	public  int listener_ack() throws IOException {
-		//int length=0;
 		byte[] message = new byte[1000];
 		//	byte[] msg=new byte[7];
 		//timer1.stop();
 		in=requestSocket.getInputStream();
 		int length = in.read(message);                  // read length of incoming message
 		//	System.out.println("ack");
-		if (length>0){ 		/**for (int j = 0; j < length; j++) {
-			System.out.println(message[j]);
-		}**/
-			//& (message[5]==0x1) 
+		if (length>0){ 		
 			boolean desired=true;//(message[0]==0x2); // & (message[6]==0x03) ;//& (message[3]==ACK)
 			if (desired ==true){
-				//	System.out.println("ack recibido");
-
 				//if(in.ready()) mesa//recep.put(in.toString().toCharArray());
 				//char[] message=recep.get();
 				//	length=message.length;
-				// read length of incoming message
-
-				//	if(length>0) {
 				//Timer timer=new Timer(10000,null);
-				//timer.
 				//br.read(message, 0, message.length);
-				//boolean desired=message[3]==ACK;		
-				//	if (desired==true){
 				//	timer1.stop();
 				/**	timer2 = new Timer (100000, new ActionListener () 
 				{ 
@@ -160,12 +122,8 @@ public class RegulatorConection extends Thread  {
 		//System.out.println("entro no listener_response");
 		byte[] message = new byte[1000];
 		in=requestSocket.getInputStream();
-		int length=in.read(message);                  // read length of incoming message
-		//if(length>0) {
-		/**for (int i = 0; i < length; i++) {
-				System.out.println(message[i]);
-			}**/
-
+		int length=in.read(message);    
+		System.out.println("message rx");
 		boolean desired=message[0]==0x2& (message[6]==0x03) & (message[3]==ACK);
 		if (desired ==true){
 			System.out.println("ack recibido");
@@ -185,18 +143,11 @@ public class RegulatorConection extends Thread  {
 			int result=0;
 			if ((length - 4)!= lon)  result=1;else
 				if (message[3]!=2) result=2;
-
 			byte[] msg=createACK((byte)2,(byte)result);
 			sendMessage(msg);
 			int i=0;int next_pos=0;int old_pos=0;int a=0;
 			while(a<message.length){	//i<tl.length
 				//cambio esto porque agora xa non sei o que espero.
-				//		System.out.println("que collo "+tl[i]+" "+message[4+8 +next_pos]);
-				//	j=i;
-				//	while(!well){
-
-				//	if(message[4+8 +next_pos]==tl[j]){
-
 				message_response[i][0]=message[4+8 +next_pos];//System.out.println("grupo "+message[4+8+ next_pos]);
 				message_response[i][1]=message[4+10 + next_pos];//System.out.println("color "+message[4+10 + next_pos]);
 				message_response[i][2]=message[4+11+ next_pos];//System.out.println("veo2 "+message[4+11+ next_pos]);
@@ -220,68 +171,55 @@ public class RegulatorConection extends Thread  {
 					num=List_ID.indexOf(message_response[i][0]);
 					List_temp.set(num, e);					
 				}
-
 				i++;
 				a=a+next_pos;
 			}}
-
 		return(message_response);
-
-		//}else listener_response(tl);
-
 	}
 
 
-
-	public  void main(int[] arrayTLtopo,int intersectionId) throws InterruptedException  {
+	public  void run() {
 		arrayGlobal= arrayTLtopo;
 		intersectionIdGlobal=intersectionId;
-
 		// Creating a socket to connect to the server
-		//System.out.println("intersectionId"+intersectionId);
-		/*for (int i = 0; i < arrayTLtopo.length; i++) {
-				System.out.println("arrayTLtopo "+arrayTLtopo[i]);
-			} */
+		System.out.println("antes do while(!connect) "+Activator.spatRegIp);//Activator.spatRegIp
 		boolean go=true;
-		boolean connect=false;
+		connect=false;
 		while(!connect){
 			try {
-				// wait////"195.77.187.234"
-				//System.out.println(Activator.spatRegIp);
-				if (requestSocket==null) {requestSocket = new Socket(Activator.spatRegIp, 21000);newConnection=true;}else
+				if (requestSocket==null) {System.out.println("antes do while(!connect)");requestSocket = new Socket("195.77.187.234", 21000);newConnection=true;}else
 					if (requestSocket.isClosed()){requestSocket = new Socket(Activator.spatRegIp, 21000);newConnection=true;}else newConnection=false;
-				out = new ObjectOutputStream(requestSocket.getOutputStream());
-				connect=true;
+				//out = new ObjectOutputStream(requestSocket.getOutputStream());
+				System.out.println("conexión establecida");
+				if (requestSocket.isConnected())connect=true;
 			} catch (IOException e) {
 				System.out.println("conexion imposible");
-				Thread.sleep(3000);
-			}
-		}
-		//listener.
+				//e.printStackTrace();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+				//	e1.printStackTrace();
+				}	}		}
+		System.out.println("despois do while(!connect)"); 
 		//requestSocket.close();
 		//	Socket connection = requestSocket.accept();
 		//list_thread=new listener(requestSocket);
 		//list_t= new Thread(list_thread);
 		//list_t.start();
 		// // Get Input and Output streams
-		//
 		//in = new InputStreamReader(System.in);
-
 		//	br = new BufferedReader(in);
-
 		//out.flush();
 		//in = new ObjectInputStream(requestSocket.getInputStream());
 		if(newConnection==true){	byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); //porque 0x55
 		//	System.out.println("Create petition");
 		isRunning=false;//listen.interrupt();
 		sendMessage(msg);}
-		//	System.out.println("msg sent");
+		System.out.println("msg sent");
 
 		// aqui vai o temporizador de 10 segundos
 		//	BufferedReader inFromServer=null;
 		//		inFromServer=new BufferedReader(new InputStreamReader(requestSocket.getInputStream()));
-
-
 		/**	Timer timer1 = new Timer (10000, new ActionListener () 
 			{ 
 				public synchronized void actionPerformed(ActionEvent e) 
@@ -290,8 +228,6 @@ public class RegulatorConection extends Thread  {
 					// Aquí el código que queramos ejecutar.
 				} 
 			}); **/
-
-
 		//timer1.setRepeats(true);
 		//timer1.restart();
 		//	timer1.notifyAll();
@@ -301,45 +237,41 @@ public class RegulatorConection extends Thread  {
 				// TODO Auto-generated catch block
 			//	e1.printStackTrace();
 			}**/
-
 		//timer1.notify();
-
 		//while(listener_ack()==1){}
 		//thread1.setPriority(Thread.MIN_PRIORITY);
 		//thread1.start();
 		//thread1.notifyAll();
 		//if(thread1.isAlive()) thread1.join();
-
 		//synchronize
 		//	this.notify();
 		//	timer2.start();
 		/**	for (int i = 0; i < arrayTLtopo.length; i++) {
 				System.out.println("tl"+arrayTLtopo[i]);
 			}**/
-		
-		while(go){
-		message_end=null;
-		try {
-			message_end=listener_response();//arrayTLtopo
-			if (message_end==null){
-				requestSocket.close();go=false;
-				main(arrayGlobal,intersectionIdGlobal);}
+		//	SenderThread a=new SenderThread();
+		while(go && isRunning){
+			message_end=null;
+			try {
+				message_end=listener_response();//arrayTLtopo
+				if (message_end==null){
+					//requestSocket.close();go=false;
+					run();}
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			go=false;
-			main(arrayGlobal,intersectionIdGlobal);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				go=false;
+				run();
+			}
+			//Thread listen_t=new Thread(new listen_and_ack());
+			//if (first1==0)listen.start();isRunning=true;
+			first1=1;
+			//return valores
+			//	requestSocket.close();
 		}
-		//Thread listen_t=new Thread(new listen_and_ack());
-		//if (first1==0)listen.start();isRunning=true;
-		first1=1;
-		//return valores
-		//	requestSocket.close();
-		}
-	//	return;
+		//	return;
 		//proba	
-
 		/**	int time0=0;
 		String num=Integer.toString(time0);
 		byte[] aa=num.getBytes();
@@ -355,28 +287,16 @@ public class RegulatorConection extends Thread  {
 
 		byte ini = 0x02;
 		byte end = 0x03;
-
-		//		System.out.println("entro en createPetitionTlTimes"+idreg);
-
 		ByteBuffer b=ByteBuffer.allocate(4);
 		b.putInt(idreg);
 		byte[] idregulator=b.array();
-		//System.out.println("idregulator[0] mau");
-		//System.out.println(idregulator[3]);
-		//System.out.println(idregulator[2]);
 		int sizeTL = tlListInt.length;
 		int sizeMessage = 5 + 2 + sizeTL;
 		int sizeMessageInfo = 3 + sizeTL;
-
 		byte[] message_pet = new byte[sizeMessage];
 		b=ByteBuffer.allocate(4);
 		b.putInt(sizeMessageInfo);
 		byte[] sizeMessageBytes=b.array();
-
-		/**	System.out.println("sizeMessageBytes[0]");
-		System.out.println(sizeMessageBytes[3]);
-		System.out.println(sizeMessageBytes[2]);
-		System.out.println(sizeMessageInfo);**/
 		message_pet[0] = ini; // init byte
 		message_pet[1] = sizeMessageBytes[2]; // byte up size
 		message_pet[2] = sizeMessageBytes[3]; // byte down size
@@ -384,17 +304,11 @@ public class RegulatorConection extends Thread  {
 		/*************** INFO *********/
 		message_pet[4] = 0;//idregulator[2]; // byte up regulator id
 		message_pet[5] = 1;//idregulator[3]; // byte down regulator id
-		//System.out.println("client>" + message[0]+message[1]+message[2]+message[3]);
 		for (int i = 0; i < tlListInt.length; i++) {
-			message_pet[i + 6] = (byte)tlListInt[i];//System.out.println(tlListInt[i]);
+			message_pet[i + 6] = (byte)tlListInt[i];
 		}
 		/******************************/
 		message_pet[sizeMessage - 1] = (byte) end; // end of message
-
-		// Paint msg
-		/*for (int i = 0; i < message_pet.length; i++) {
-			System.out.println("Mensaje de petición " + message_pet[i]);
-		}*/
 		return message_pet;
 	}
 
@@ -411,9 +325,6 @@ public class RegulatorConection extends Thread  {
 		message_ack[5] = id;
 		/**********************/
 		message_ack[6] = end; // end of message
-		/*for (int i = 0; i < message_ack.length; i++) {
-			//System.out.println("Mensaje de ack " + i + " " + message_ack[i]);
-		}*/
 		return message_ack;
 	}
 
@@ -424,11 +335,9 @@ public class RegulatorConection extends Thread  {
 	public void sendMessage(byte[] msg) {
 		try {
 			// for (int i = 0; i < msg.length; i++) {
-			// out.writeByte(msg[i]);
-			// }
+			// out.writeByte(msg[i]);// }
 			out.write(msg);
 			out.flush();
-			//System.out.println("client>" + msg.toString());
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 		}
@@ -436,8 +345,10 @@ public class RegulatorConection extends Thread  {
 
 	public void close() {
 		try {
+			System.out.println("ENTRO EN CLOSE");
 			in.close();
 			out.close();
+		//	isRunning=false;
 			requestSocket.close();
 		} catch (IOException ioException) {
 			ioException.printStackTrace();

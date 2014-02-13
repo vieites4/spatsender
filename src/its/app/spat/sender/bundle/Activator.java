@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 	private ServiceTracker itsMessagesSenderServiceTracker = null;
 
 	public SenderThread senderThread;
-public static volatile String spatRegIp="192.168.1.5";
+public static volatile String spatRegIp="195.77.187.234";
 	public static volatile String spatFrequency = "2000";
 	public static volatile String spatKML = "kml/001.kml";
 

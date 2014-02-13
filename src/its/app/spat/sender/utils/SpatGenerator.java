@@ -6,31 +6,25 @@ import its.fac.messages.api.services.ItsMessagesSenderService;
 import its.fac.messages.api.types.IntersectionState;
 import its.fac.messages.api.types.MovementState;
 import its.fac.messages.api.types.Spat;
-
 import java.nio.ByteBuffer;
 import java.util.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
-public final class SpatGenerator extends Thread {
-
-	private final static Logger logger = LoggerFactory
-			.getLogger(SpatGenerator.class);
-
+public class SpatGenerator {//extends Thread {
+	//private final static Logger logger = LoggerFactory.getLogger(SpatGenerator.class);
 	private Spat spat;
 	private Vector<IntersectionState> intersectionstate;
 	private Vector<MovementState> movementstate;
 	private String[] spatKml;
 	private String[] spatKmlPoint;
 	private int intersectionId;
-	 boolean first=true;
-
+	public boolean first1=true;
 	RegulatorConection client;
-
+	public  RegulatorConection th1=new RegulatorConection() ;
 	public SpatGenerator() {
 		client = new RegulatorConection();
 	}
-
 
 	public int check_colour(char colour){
 
@@ -96,11 +90,12 @@ public final class SpatGenerator extends Thread {
 			spatKml = Activator.spatKML.split("/");
 			spatKmlPoint = spatKml[1].split("\\.");
 			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
-			//System.out.println("entro en sending" );
-			byte [][] response=null;
-
-			if (first=true){client.start();first=false;}
-
+			byte [][] response=new byte[100][4];
+			client.arrayTLtopo=arrayTLtopo;
+			client.intersectionId=intersectionId;
+			System.out.println("antes "+first1);
+			if (first1){System.out.println("mau");first1=false;th1.start();}
+			System.out.println("despois "+first1);
 			/**while(response==null){
 				response=client.message_end;//client.main(arrayTLtopo,intersectionId);
 			}**/
@@ -116,21 +111,18 @@ public final class SpatGenerator extends Thread {
 				client.List_temp.set(i,element);
 
 			}
-			
+
 			for (int i = 0; i < client.List_temp.size(); i++) {
-					
-				response[i][0]=(byte)client.List_temp.get(i).ID;
+
+				response[i][0]=(byte)(client.List_temp.get(i).ID);
 				response[i][1]=client.List_temp.get(i).color;//System.out.println("color "+message[4+10 + next_pos]);
 				byte[] res=ByteBuffer.allocate(2).putInt(client.List_temp.get(i).Timer_last).array();
 				response[i][2]=res[0];//System.out.println("veo2 "+message[4+11+ next_pos]);
 				response[i][3]=res[1];//System.out.println("veo2 "+message[4+12+ next_pos]);
-				
+				arrayTLtopo[i]=response[i][0];
+
 			}
 			//client.
-
-			for (int i = 0; i < response.length; i++) {
-				arrayTLtopo[i]=response[i][0];
-			}
 
 			if (response==null){			System.out.println("No conection" );return null;}
 			//	System.out.println("regreso de sending" +" "+0x03+" "+ response[0][0]+" "+response[0][1]);//+" "+response[1][0]);
@@ -194,7 +186,7 @@ public final class SpatGenerator extends Thread {
 					else if(response[i][1]== 'R'|| response[i][1]== 'S')colortl1=0x4;	
 
 				}
-				//	System.out.println("rellena laneset");
+					//System.out.println("rellena laneset");
 				movementstate.get(i).setMovementName("STATE"+"+i+");// no es necesario
 				/**for (int j = 0; j < laneset.length; j++) {
 					System.out.println(laneset[j] );
@@ -242,8 +234,9 @@ public final class SpatGenerator extends Thread {
 	//spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
 
 }**/
-			return spat;
 			//System.out.println("NOOOOO");
+			return spat;
+
 			//	}
 			//	return null;
 		}

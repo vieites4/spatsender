@@ -24,7 +24,7 @@ public class SenderThread extends Thread {
 	private final static Logger logger = LoggerFactory
 			.getLogger(SenderThread.class);
 
-	private boolean isRunning = false;
+	public  boolean isRunning = false;
 	private boolean isServiceRegistered = false;
 	private SpatGenerator spatGenerator;
 	private TLTopology tlTopology;
@@ -100,6 +100,7 @@ public class SenderThread extends Thread {
 
 	public final void serviceUnregister() {
 		this.isServiceRegistered = false;
+	//	SpatGenerator.th1.interrupted();
 	}
 
 	public final synchronized void run() {
@@ -108,8 +109,7 @@ public class SenderThread extends Thread {
 			if (this.isServiceRegistered) {
 				try {
 					
-					Spat spat = this.spatGenerator.generateSpatMessage(
-							itsMessagesSenderService, strTLTopo);		
+					Spat spat = this.spatGenerator.generateSpatMessage(	itsMessagesSenderService, strTLTopo);		
 					
 					
 					if (spat != null) {	itsMessagesSenderService.send(spat);
