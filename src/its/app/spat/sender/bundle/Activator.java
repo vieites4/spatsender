@@ -2,6 +2,7 @@ package its.app.spat.sender.bundle;
 
 import its.app.spat.sender.impl.ServiceTrackerCustomizerImpl;
 import its.app.spat.sender.thread.SenderThread;
+import its.app.spat.sender.utils.RegulatorConection;
 import its.fac.messages.api.services.ItsMessagesSenderService;
 
 import org.osgi.framework.BundleActivator;
@@ -20,7 +21,7 @@ public class Activator implements BundleActivator {
 	private ServiceTracker itsMessagesSenderServiceTracker = null;
 
 	public SenderThread senderThread;
-
+public RegulatorConection regulatorConection;
 	public static volatile String spatFrequency = "2000";
 	public static volatile String spatKML = "kml/001.kml";
 
@@ -49,9 +50,8 @@ public class Activator implements BundleActivator {
 
 	public void stop(BundleContext paramBundleContext) {
 		this.senderThread.stopSenderThread();
-
 		this.itsMessagesSenderServiceTracker.close();
-
+		//this.senderThread.interrupt();
 		logger.info("SPATSender: Bundle stopped!");
 
 	}

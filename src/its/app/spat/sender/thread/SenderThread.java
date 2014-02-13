@@ -28,6 +28,7 @@ public class SenderThread extends Thread {
 	private boolean isServiceRegistered = false;
 	private SpatGenerator spatGenerator;
 	private TLTopology tlTopology;
+	
 	private ItsMessagesSenderService itsMessagesSenderService = null;
 	TLSimulator tl1;
 	TLSimulator tl2;
@@ -108,16 +109,13 @@ public class SenderThread extends Thread {
 			if (this.isServiceRegistered) {
 				try {
 					
-					Spat spat = this.spatGenerator.generateSpatMessage(
-							itsMessagesSenderService, strTLTopo);
-					
-					
-					
+					Spat spat = this.spatGenerator.generateSpatMessage(	itsMessagesSenderService, strTLTopo);
+								
 					if (spat != null) {	itsMessagesSenderService.send(spat);
-						logger.info("SPATSender: spat messages has been sent to GNBTPAPI on BTP port " + spat.toString());
+					//	logger.info("SPATSender: spat messages has been sent to GNBTPAPI on BTP port " + spat.toString());
 					}else {System.out.println("spat==null");}
 				} catch (MessageIncompleteException e) {
-					logger.error("SPATSender: error sending spat messages "	+ e.getMessage());
+					//logger.error("SPATSender: error sending spat messages "	+ e.getMessage());
 				} catch (ValueOutOfRangeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -133,8 +131,7 @@ public class SenderThread extends Thread {
 				if (timeToSleep > 0l)
 					Thread.sleep(timeToSleep);
 			} catch (InterruptedException interruptedException) {
-				logger.error("SPATSender: Send thread has been interrupted "
-						+ interruptedException.getMessage());
+			//	logger.error("SPATSender: Send thread has been interrupted "+ interruptedException.getMessage());
 			}
 
 		}
@@ -142,6 +139,9 @@ public class SenderThread extends Thread {
 
 	public final void stopSenderThread() {
 		this.isRunning = false;
+		this.spatGenerator.close();
+		this.isServiceRegistered=false;
+		//this.spat.
 // NOT NECESARY STOP
 //		tl1.stopTL();
 //		tl2.stopTL();

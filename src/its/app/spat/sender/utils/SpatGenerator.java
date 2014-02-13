@@ -12,16 +12,14 @@ import org.slf4j.LoggerFactory;
 
 public final class SpatGenerator extends Thread {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(SpatGenerator.class);
-
+	private final static Logger logger = LoggerFactory			.getLogger(SpatGenerator.class);
 	private Spat spat;
 	private Vector<IntersectionState> intersectionstate;
 	private Vector<MovementState> movementstate;
 	private String[] spatKml;
 	private String[] spatKmlPoint;
 	private int intersectionId;
-
+	private boolean isRunning=true;
 
 	RegulatorConection client;
 
@@ -61,13 +59,13 @@ public final class SpatGenerator extends Thread {
 					{ 0x1000   ,0x2000   ,0x4000   ,0x8000}};
 			int[] arrayTLtopo=new int[strTLTopo.length];
 			String[] arraytype=new String[strTLTopo.length];
-		//	System.out.println(strTLTopo[0]+" strTLTopo[0]");
+			//	System.out.println(strTLTopo[0]+" strTLTopo[0]");
 			//System.out.println(strTLTopo[1]);System.out.println("strTLTopo[1]");
 			String lanes;int lon=0;
 			int [][] laneset=new int[255][127];
-		boolean pedestrian=false;
+			boolean pedestrian=false;
 			for (int i = 0; i < strTLTopo.length; i++) {
-				
+
 				//System.out.println(strTLTopo+" strTLTopo");
 				lon=strTLTopo[i].split(";").length;
 				if (lon==4){pedestrian=false;
@@ -96,13 +94,13 @@ public final class SpatGenerator extends Thread {
 			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
 			System.out.println("entro en sending" );
 			byte [][] response=null;
-			while(response==null){ response=client.sending(arrayTLtopo,intersectionId);}
-			for (int i = 0; i < response.length; i++) {
+			while(response==null && this.isRunning){ response=client.sending(arrayTLtopo,intersectionId);}
+			if(response!=null)for (int i = 0; i < response.length; i++) {
 				arrayTLtopo[i]=response[i][0];
-			}
-			
+			};
+
 			if (response==null){			System.out.println("No conection" );return null;}
-		//	System.out.println("regreso de sending" +" "+0x03+" "+ response[0][0]+" "+response[0][1]);//+" "+response[1][0]);
+			//	System.out.println("regreso de sending" +" "+0x03+" "+ response[0][0]+" "+response[0][1]);//+" "+response[1][0]);
 			int tlLengh = strTLTopo.length;
 			spat = itsMessagesSenderService.createSpat();
 			spat.setMsdId(DSRCMessageID.SIGNALPHASEANDTIMINGMESSAGE);
@@ -112,7 +110,7 @@ public final class SpatGenerator extends Thread {
 			intersectionstate.get(0).setIntersectionStatus(0); // estados de 0 a 7
 			movementstate = intersectionstate.get(0).createMovementState(tlLengh);
 			long colortl1=0;
-		//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
+			//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
 			for (int i = 0; i < arrayTLtopo.length; i++) {
 				if (laneset[i][0]>=0)	{			
 					String[] tls = arraytype[i].split(",");
@@ -178,7 +176,7 @@ public final class SpatGenerator extends Thread {
 					if(laneset[i][ii]==0)a=0;else laneset1[ii]=laneset[i][ii];
 					ii++;
 				}			
-				
+
 				movementstate.get(i).setLaneSet(laneset1);
 				movementstate.get(i).setCurrState(colortl1);
 				System.out.println("tiempos "+response[i][2]+" "+ response[i][3]+" "+ response[i][4]+" "+ response[i][5]);
@@ -186,7 +184,7 @@ public final class SpatGenerator extends Thread {
 				int sum1=response[i][3]&(0xff);
 				int sum2= response[i][2]&(0xff);
 				int sum=sum1+sum2*256;
-				
+
 				//System.out.println(str);
 				if ( response[i][3]!=-1)movementstate.get(i).setTimeToChange(sum);else{
 					byte [] c={response[i][6],response[i][7]}; 
@@ -195,24 +193,27 @@ public final class SpatGenerator extends Thread {
 					sum=sum1+sum2*256;
 					movementstate.get(i).setTimeToChange(sum);
 				}
-			//	System.out.println("Colors: " + colortl1 );
-			//	System.out.println("Time: " + sum);
-			
+				//	System.out.println("Colors: " + colortl1 );
+				//	System.out.println("Time: " + sum);
+
 			}
 			intersectionstate.get(0).setMovementState(movementstate);
-			
+
 			spat.setIntersectionState(intersectionstate);
-			
-int len=spat.getIntersectionState().get(0).getMovementState().size();
-for (int j = 0; j < len; j++) {
-	System.out.println("Para i= "+j+" "+spat.getIntersectionState().get(0).getMovementState().get(j).getTimeToChange()+" "+
-	spat.getIntersectionState().get(0).getMovementState().get(j).getCurrState()+" "+
-	spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
-	
-}
+
+			int len=spat.getIntersectionState().get(0).getMovementState().size();
+			for (int j = 0; j < len; j++) {
+				System.out.println("Para i= "+j+" "+spat.getIntersectionState().get(0).getMovementState().get(j).getTimeToChange()+" "+
+						spat.getIntersectionState().get(0).getMovementState().get(j).getCurrState()+" "+
+						spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
+
+			}
 			return spat;
-			//System.out.println("NOOOOO");
-			//	}
-			//	return null;
+
+		}
+		public void close(){
+			this.isRunning=false;
+			this.client.close_reg();
+			System.out.println("close Spat Generator");
 		}
 }

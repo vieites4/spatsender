@@ -9,7 +9,7 @@ RegulatorConection RegulatorConection;
 		boolean go=false;
 		while(go){//RegulatorConection.requestSocket.isClosed()==false && RegulatorConection.isRunning){
 		byte[] buffer=new byte[1000];
-		System.out.println(RegulatorConection.isRunning + "is running");
+		//System.out.println(RegulatorConection.isRunning + "is running");
 		int len;
 		try {
 			len = RegulatorConection.in.read(buffer);
