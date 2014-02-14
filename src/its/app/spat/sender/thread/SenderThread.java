@@ -143,6 +143,7 @@ public class SenderThread extends Thread {
 
 	public final void stopSenderThread() {
 		this.isRunning = false;
+		spatGenerator.close();
 // NOT NECESARY STOP
 //		tl1.stopTL();
 //		tl2.stopTL();

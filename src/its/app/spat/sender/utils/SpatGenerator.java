@@ -11,7 +11,7 @@ import java.util.Vector;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-public class SpatGenerator {//extends Thread {
+public class SpatGenerator extends Thread {
 	//private final static Logger logger = LoggerFactory.getLogger(SpatGenerator.class);
 	private Spat spat;
 	private Vector<IntersectionState> intersectionstate;
@@ -20,10 +20,10 @@ public class SpatGenerator {//extends Thread {
 	private String[] spatKmlPoint;
 	private int intersectionId;
 	public boolean first1=true;
-	RegulatorConection client;
-	public  RegulatorConection th1=new RegulatorConection() ;
+	//RegulatorConection client;
+	private  RegulatorConection th1=new RegulatorConection() ;
 	public SpatGenerator() {
-		client = new RegulatorConection();
+		//	client = new RegulatorConection();
 	}
 
 	public int check_colour(char colour){
@@ -91,34 +91,40 @@ public class SpatGenerator {//extends Thread {
 			spatKmlPoint = spatKml[1].split("\\.");
 			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
 			byte [][] response=new byte[100][4];
-			client.arrayTLtopo=arrayTLtopo;
-			client.intersectionId=intersectionId;
+			th1.arrayTLtopo=arrayTLtopo;
+			th1.intersectionId=intersectionId;
 			System.out.println("antes "+first1);
 			if (first1){System.out.println("mau");first1=false;th1.start();}
-			System.out.println("despois "+first1);
+
 			/**while(response==null){
 				response=client.message_end;//client.main(arrayTLtopo,intersectionId);
 			}**/
 			typeTemp element;
+
+			System.out.println(th1.List_temp.size()+ "tamaño lista de temporización");
 			//aquí sería un bo lugar para percorrer a lista de temp e ir creando as mensaxes
-			for (int i = 0; i < client.List_temp.size(); i++) {
-				element=client.List_temp.get(i);
-				element.Timer_last=element.Timer_last - 500;
+			//	for (int i = 0; i < i++) {
+			int num= th1.List_temp.size();int i=0;
+			while(i<num){
+				element=th1.List_temp.get(i);
+				element.Timer_last=element.Timer_last - (int)1;
 				if(element.Timer_last<=0){
-					client.List_temp.remove(i);
-					client.List_ID.remove(i);
-				}
-				client.List_temp.set(i,element);
-
+					th1.List_temp.remove(i);
+					th1.List_ID.remove(i);
+				}else th1.List_temp.set(i,element);
+				i++;
+				num=th1.List_temp.size();
 			}
+			System.out.println(th1.List_temp.size()+ "tamaño lista de temporización");
 
-			for (int i = 0; i < client.List_temp.size(); i++) {
+			for ( i = 0; i < th1.List_temp.size(); i++) {
 
-				response[i][0]=(byte)(client.List_temp.get(i).ID);
-				response[i][1]=client.List_temp.get(i).color;//System.out.println("color "+message[4+10 + next_pos]);
-				byte[] res=ByteBuffer.allocate(2).putInt(client.List_temp.get(i).Timer_last).array();
-				response[i][2]=res[0];//System.out.println("veo2 "+message[4+11+ next_pos]);
-				response[i][3]=res[1];//System.out.println("veo2 "+message[4+12+ next_pos]);
+				response[i][0]=(byte)(th1.List_temp.get(i).ID);
+				response[i][1]=th1.List_temp.get(i).color;//System.out.println("color "+message[4+10 + next_pos]);
+				byte[] res=new byte[4];
+				res=ByteBuffer.allocate(4).putInt(th1.List_temp.get(i).Timer_last).array();
+				response[i][2]=res[2];System.out.println("veo2 "+res[2]+" "+res[3]);
+				response[i][3]=res[3];
 				arrayTLtopo[i]=response[i][0];
 
 			}
@@ -136,13 +142,13 @@ public class SpatGenerator {//extends Thread {
 			movementstate = intersectionstate.get(0).createMovementState(tlLengh);
 			long colortl1=0;
 			//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
-			for (int i = 0; i < arrayTLtopo.length; i++) {
+			for ( i = 0; i < arrayTLtopo.length; i++) {
 				if (laneset[i][0]>=0)	{			
 					String[] tls = arraytype[i].split(",");
 					String color = tls[0];
 					String type_len = tls[1];
 					String[] colorSetsString = color.split(":");
-					char[][] colorset = new char[arrayTLtopo.length][3];
+					char[][] colorset = new char[arrayTLtopo.length][4];
 					String[] typeSetsString = type_len.split(":");
 					String[][] type_set = new String[arrayTLtopo.length][3];
 					colorset[i][0]= colorSetsString[0].charAt(2);//porque leva {(diante
@@ -164,7 +170,8 @@ public class SpatGenerator {//extends Thread {
 						else if(response[i][1]== 'A' || response[i][1]== 'F'|| response[i][1]== 'N'|| response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G'|| response[i][1]== 'S'|| response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'Z')
 						{
 							column=check_colour(colorset[i][1]);
-							if(response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'F'|| response[i][1]== 'Z'||response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G'){column1=check_colour(colorset[i][3]);aa=1;}
+							if(response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'F'|| response[i][1]== 'Z'||response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G')
+							{column1=check_colour(colorset[i][3]);aa=1;}
 							if(response[i][1]== 'N'){column1=check_colour(colorset[i][2]);aa=1;}
 							if(response[i][1]== 'S')	{column1=check_colour(colorset[i][0]);aa=1;}
 							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
@@ -186,7 +193,7 @@ public class SpatGenerator {//extends Thread {
 					else if(response[i][1]== 'R'|| response[i][1]== 'S')colortl1=0x4;	
 
 				}
-					//System.out.println("rellena laneset");
+				//System.out.println("rellena laneset");
 				movementstate.get(i).setMovementName("STATE"+"+i+");// no es necesario
 				/**for (int j = 0; j < laneset.length; j++) {
 					System.out.println(laneset[j] );
@@ -239,5 +246,9 @@ public class SpatGenerator {//extends Thread {
 
 			//	}
 			//	return null;
+		}
+		public void close(){
+			//	client.close_reg();
+			this.th1.close_reg();
 		}
 }
