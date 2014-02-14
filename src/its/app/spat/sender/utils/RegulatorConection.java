@@ -144,7 +144,7 @@ public class RegulatorConection extends Thread  {
 				}
 				
 			} else	length=in.read(message1);
-		}
+		}else{message1=message;}
 		byte[][]message_response=new byte[9][8];//o 9 é un exemplo, teño que poñer o axeitado
 		desired=(message1[0]==0x02)&& (message1[3]==2);
 		//System.out.println(message[0] + message[3] );
@@ -160,7 +160,7 @@ public class RegulatorConection extends Thread  {
 			int result=0;
 			if ((length - 4)!= lon)  result=1;else
 				if (message1[3]!=2) result=2;
-			byte[] msg=createACK((byte)2,(byte)result);
+			byte[] msg=createACK((byte)2,(byte)0);
 			sendMessage(msg);
 			int i=0;int next_pos=0;int old_pos=0;int a=0;
 			while(a<message1.length){	//i<tl.length
@@ -184,17 +184,19 @@ public class RegulatorConection extends Thread  {
 				b[1]=message1[4+11+ next_pos];
 				System.out.println(b[0]+" "+b[1]);
 				String s=new String(b,"UTF-8");
-				e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;
+				e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;System.out.println(i+" e.Timer_last "+ e.Timer_last);
 				e.color=message_response[i][1];
 				
 				int num=0;
-				if(this.List_ID.contains(message_response[i][0])==false)this.List_temp.add(e);else {
+				Byte bb=(message_response[i][0]);
+				if(this.List_ID.contains(bb.intValue())==false){this.List_temp.add(e);this.List_ID.add(e.ID);}else {
 					num=this.List_ID.indexOf(message_response[i][0]);
-					this.List_temp.set(num, e);					
+					this.List_temp.set(num, e);		
+		
 				}
 				System.out.println("ver lista");
 				for (int j = 0; j < this.List_temp.size(); j++) {
-					System.out.println("tempos na lista"+this.List_temp.get(i).Timer_last );
+					System.out.println("tempos na lista"+this.List_temp.get(j).Timer_last );
 				}}
 				next_pos=((int)message1[9+4+old_pos]*7) +2+old_pos;
 				old_pos=next_pos;
@@ -325,7 +327,7 @@ public class RegulatorConection extends Thread  {
 		byte end = 0x03;
 		ByteBuffer b;
 		//byte[] idregulator=b.array();
-		int [] tlListInt1={8,9,10};
+		int [] tlListInt1={2,3,4};
 		int sizeTL = tlListInt1.length;
 		int sizeMessage = 5 + 2 + sizeTL;
 		int sizeMessageInfo = 3 + sizeTL;

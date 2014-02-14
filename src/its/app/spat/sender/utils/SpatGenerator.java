@@ -55,8 +55,8 @@ public class SpatGenerator extends Thread {
 					{ 0x10     ,0x20     ,0x40     ,0x80},
 					{ 0x100    ,0x200    ,0x400    ,0x800},
 					{ 0x1000   ,0x2000   ,0x4000   ,0x8000}};
-			int[] arrayTLtopo=new int[strTLTopo.length];
-			String[] arraytype=new String[strTLTopo.length];
+			int[] arrayTLtopo=new int[11];//strTLTopo.length
+			String[] arraytype=new String[11];
 			//	System.out.println(strTLTopo[0]+" strTLTopo[0]");
 			//System.out.println(strTLTopo[1]);System.out.println("strTLTopo[1]");
 			String lanes;int lon=0;
@@ -107,7 +107,7 @@ public class SpatGenerator extends Thread {
 			int num= th1.List_temp.size();int i=0;
 			while(i<num){
 				element=th1.List_temp.get(i);
-				element.Timer_last=element.Timer_last - (int)1;
+				element.Timer_last=element.Timer_last - (int)10;
 				if(element.Timer_last<=0){
 					th1.List_temp.remove(i);
 					th1.List_ID.remove(i);
@@ -125,7 +125,7 @@ public class SpatGenerator extends Thread {
 				res=ByteBuffer.allocate(4).putInt(th1.List_temp.get(i).Timer_last).array();
 				response[i][2]=res[2];System.out.println("veo2 "+res[2]+" "+res[3]);
 				response[i][3]=res[3];
-				arrayTLtopo[i]=response[i][0];
+				arrayTLtopo[i]=(int)response[i][0];
 
 			}
 			//client.
@@ -160,7 +160,7 @@ public class SpatGenerator extends Thread {
 					int column=0;	int column1=1;	int aa=0;	int row=0;		int pos=0;
 					if(response[i][1]== 'D'){ colortl1=0x0;}else{
 						if(response[i][1]== 'V'|| response[i][1]== 'C'|| response[i][1]== 'P'){
-
+							aa=0;
 							column=check_colour(colorset[i][2]);
 							if(response[i][1]== 'C'|| response[i][1]== 'P'){aa=1;column1=check_colour(colorset[i][3]);}
 							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
@@ -168,7 +168,7 @@ public class SpatGenerator extends Thread {
 
 						}
 						else if(response[i][1]== 'A' || response[i][1]== 'F'|| response[i][1]== 'N'|| response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G'|| response[i][1]== 'S'|| response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'Z')
-						{
+						{aa=0;
 							column=check_colour(colorset[i][1]);
 							if(response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'F'|| response[i][1]== 'Z'||response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G')
 							{column1=check_colour(colorset[i][3]);aa=1;}
@@ -178,7 +178,7 @@ public class SpatGenerator extends Thread {
 							row=check_type(type_set[i][pos]);System.out.println("Entrei en A " +column+ " "+row);
 
 						}else if(response[i][1]== 'R'|| response[i][1]== 'B'|| response[i][1]== 'H'){
-
+							aa=0;
 							column=check_colour(colorset[i][0]);
 							if(response[i][1]== 'B'|| response[i][1]== 'H'){column1=check_colour(colorset[i][3]);aa=1;}
 							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
@@ -186,7 +186,8 @@ public class SpatGenerator extends Thread {
 						} 
 
 						if(response[i][1]== 'F'|| response[i][1]== 'J'|| response[i][1]== 'I'|| response[i][1]== 'G'|| response[i][1]== 'E'|| response[i][1]== 'K'|| response[i][1]== 'Z'){column=3;}
-						if (aa==1)	colortl1=kml[row][column]+kml[row][column1];else colortl1=kml[row][column];         }
+						if (aa==1)	colortl1=kml[row][column]+kml[row][column1];
+						else colortl1=kml[row][column];         }
 				}else{
 					if(response[i][1]== 'D'||response[i][1]== 'C'||response[i][1]== 'F'||response[i][1]== 'B') colortl1=0x0;
 					else if(response[i][1]== 'V'|| response[i][1]== 'N'|| response[i][1]== 'P'|| response[i][1]== 'H')colortl1=0x1;
