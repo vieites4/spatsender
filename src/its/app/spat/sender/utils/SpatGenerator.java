@@ -100,14 +100,14 @@ public class SpatGenerator extends Thread {
 
 			typeTemp element;
 			int num= th1.List_temp.size();int i=0;
-			if(th1.waitingResponse)th1.Temp100=th1.Temp100-5; if(th1.waitingACK)th1.Temp10=th1.Temp10-5;
+			if(th1.waitingResponse)th1.Temp100=th1.Temp100-(Integer.parseInt(Activator.spatFrequency)/100); if(th1.waitingACK)th1.Temp10=th1.Temp10-(Integer.parseInt(Activator.spatFrequency)/100);
 			System.out.println(th1.Temp10+" "+th1.Temp100+ " temporizo");
 			
 			if(th1.Temp10<=0){th1.close();th1.Temp10=20;}else
 			if(th1.Temp100<=0){th1.close();th1.Temp100=200;}
 			while(i<num){
 				element=th1.List_temp.get(i);
-				element.Timer_last=element.Timer_last - (int)5;
+				element.Timer_last=element.Timer_last - (Integer.parseInt(Activator.spatFrequency)/100);
 				if(element.Timer_last<=0){
 					th1.List_temp.remove(i);
 					th1.List_ID.remove(i);
@@ -147,7 +147,7 @@ public class SpatGenerator extends Thread {
 			long colortl1=0;
 			//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
 			for ( i = 0; i < arrayTLtopo.length; i++) {
-				System.out.println(arrayTLtopo[i] + " "+ laneset[i][0]);
+			//	System.out.println(arrayTLtopo[i] + " "+ laneset[i][0]);
 				if (laneset[i][0]>=0)	{			
 					String[] tls = arraytype[i].split(",");
 					String color = tls[0];
@@ -218,7 +218,7 @@ public class SpatGenerator extends Thread {
 					ii++;
 				}		
 				for (int j = 0; j < laneset1.length; j++) {
-					System.out.println(i+" laneset1 "+laneset1[j]+" "+laneset1.length);
+			//		System.out.println(i+" laneset1 "+laneset1[j]+" "+laneset1.length);
 				}
 				//
 				movementstate.get(i).setLaneSet(laneset1);
@@ -237,6 +237,7 @@ public class SpatGenerator extends Thread {
 					sum=sum1+sum2*256;
 					movementstate.get(i).setTimeToChange(sum);
 				}
+				System.out.println("time to change:"+sum+ " color:"+colortl1+ " laneset1:"+laneset1[0]);
 				//	System.out.println("Colors: " + colortl1 );
 				//	System.out.println("Time: " + sum);
 
@@ -252,7 +253,7 @@ public class SpatGenerator extends Thread {
 	//spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
 
 }**/
-			//	System.out.println(spat.toString());
+				
 
 			System.out.println("return spat");
 			return spat;
