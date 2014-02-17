@@ -22,7 +22,7 @@ public class RegulatorConection extends Thread  {
 	public int[] arrayTLtopo;
 	public boolean waitingACK=false;
 	public boolean waitingResponse=false;
-	private boolean connect=true;
+	public boolean connect=true;
 	public int  Temp10=20;
 	public int Temp100=200;
 	Timer timer1,timer2;
@@ -151,12 +151,14 @@ this.waitingResponse=false;
 				this.connect=true;
 			} catch (IOException e) {
 				System.out.println("conexion imposible");
+				
 				//e.printStackTrace();
 				try {
 					Thread.sleep(1000);
+					//return;
 				} catch (InterruptedException e1) {
 					//	e1.printStackTrace();
-				}	}		}
+				}			}
 		if(newConnection==true){	byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); newConnection=false;//porque 0x55
 		sendMessage(msg);
 		System.out.println("msg sent");
@@ -180,7 +182,7 @@ this.waitingResponse=false;
 			}
 			first1=1;
 
-		}
+		}}
 	}
 
 	public byte[] createPetitionTlTimes(int idreg, int[] tlListInt) {

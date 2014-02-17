@@ -256,7 +256,7 @@ public class SpatGenerator extends Thread {
 				
 
 			System.out.println("return spat");
-			return spat;
+			if (th1.connect)return spat;else return null;
 
 			//	}
 			//	return null;
