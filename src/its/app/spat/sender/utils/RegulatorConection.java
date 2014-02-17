@@ -37,13 +37,13 @@ public class RegulatorConection extends Thread  {
 	int [] arrayGlobal;
 	int intersectionIdGlobal;
 	private boolean isRunning = true;
-//	listen_and_ack listen=new listen_and_ack();
+	//	listen_and_ack listen=new listen_and_ack();
 	Functions functions = new Functions();
 	byte ACK=0x06;
 	int first1=0;
 	public RegulatorConection() {
-		}
-	
+	}
+
 	Reception recep;
 	public  int listener_ack() throws IOException {
 		byte[] message = new byte[1000];
@@ -67,7 +67,7 @@ public class RegulatorConection extends Thread  {
 		if (length>7)message1=new byte[length -7];
 		if (desired ==true){
 			System.out.println("ack recibido");
-this.Temp10=20;this.waitingACK=false;
+			this.Temp10=20;this.waitingACK=false;
 			if (length>7){
 				for (int i = 0; i < length - 7; i++) {
 					message1[i]=message[7+i];
@@ -79,7 +79,7 @@ this.Temp10=20;this.waitingACK=false;
 		desired=(message1[0]==0x02)&& (message1[3]==2);
 		while (desired==false){return null;}
 		if (desired==true){
-this.waitingResponse=false;
+			this.waitingResponse=false;
 			int lon0=message1[1]&(0xff);
 			int lon1=message1[2]&(0xff);
 			int lon= lon0*256+lon1;
@@ -120,16 +120,19 @@ this.waitingResponse=false;
 						this.List_temp.set(num, e);		
 
 					}
-					System.out.println("ver lista");
-					for (int j = 0; j < this.List_temp.size(); j++) {
-						System.out.println("tempos na lista"+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last );
-					}}
+				}
+
+
 				next_pos=((int)message1[9+4+old_pos]*7) +2+old_pos;
 				old_pos=next_pos;
 
 				i++;
 				a=a+next_pos;
 			}}
+		System.out.println("ver lista");
+		for (int j = 0; j < this.List_temp.size(); j++) {
+			System.out.println("tempos na lista"+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
+		}
 		return(message_response);
 	}
 
@@ -151,7 +154,7 @@ this.waitingResponse=false;
 				this.connect=true;
 			} catch (IOException e) {
 				System.out.println("conexion imposible");
-				
+
 				//e.printStackTrace();
 				try {
 					Thread.sleep(1000);
@@ -159,30 +162,30 @@ this.waitingResponse=false;
 				} catch (InterruptedException e1) {
 					//	e1.printStackTrace();
 				}			}
-		if(newConnection==true){	byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); newConnection=false;//porque 0x55
-		sendMessage(msg);
-		System.out.println("msg sent");
-		this.waitingACK=true;
-		this.waitingResponse=true;
-		}
-
-
-		while(go && this.isRunning){
-			message_end=null;
-			try {
-				message_end=listener_response();//arrayTLtopo
-				if (message_end==null){
-				}
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				go=false;
-				//if (this.isRunning){	System.out.println("volvo por esto2");run();}
+			if(newConnection==true){	byte[] msg = createPetitionTlTimes(intersectionId, arrayTLtopo); newConnection=false;//porque 0x55
+			sendMessage(msg);
+			System.out.println("msg sent");
+			this.waitingACK=true;
+			this.waitingResponse=true;
 			}
-			first1=1;
 
-		}}
+
+			while(go && this.isRunning){
+				message_end=null;
+				try {
+					message_end=listener_response();//arrayTLtopo
+					if (message_end==null){
+					}
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					go=false;
+					//if (this.isRunning){	System.out.println("volvo por esto2");run();}
+				}
+				first1=1;
+
+			}}
 	}
 
 	public byte[] createPetitionTlTimes(int idreg, int[] tlListInt) {
@@ -192,7 +195,7 @@ this.waitingResponse=false;
 		ByteBuffer b;
 		//byte[] idregulator=b.array();
 		int [] tlListInt1={2,3,4};
-		int sizeTL = tlListInt1.length;
+		int sizeTL = tlListInt1.length ;
 		int sizeMessage = 5 + 2 + sizeTL;
 		int sizeMessageInfo = 3 + sizeTL;
 		byte[] message_pet = new byte[sizeMessage];
