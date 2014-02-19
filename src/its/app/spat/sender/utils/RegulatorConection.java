@@ -57,13 +57,14 @@ public class RegulatorConection extends Thread  {
 		return 0;
 	}
 	byte[][] listener_response() throws IOException{//int[] tl
+		int states=0;
 		byte[] message = new byte[1000];
 		in=requestSocket.getInputStream();
 		int length=0;
 		while(length==0)length=in.read(message);    
 		if (length>0){System.out.println("message rx");this.Temp100=200;}
 		boolean desired=(message[0]==0x2) && (message[6]==0x03) && (message[3]==ACK);
-		byte[] message1=new byte[100];//=message;
+		byte[] message1=new byte[1000];//=message;
 		if (length>7)message1=new byte[length -7];
 		if (desired ==true){
 			System.out.println("ack recibido");
@@ -75,7 +76,7 @@ public class RegulatorConection extends Thread  {
 
 			} else	length=in.read(message1);
 		}else{message1=message;}
-		byte[][]message_response=new byte[9][8];//o 9 é un exemplo, teño que poñer o axeitado
+		byte[][]message_response=new byte[9][11];//o 9 é un exemplo, teño que poñer o axeitado
 		desired=(message1[0]==0x02)&& (message1[3]==2);
 		while (desired==false){return null;}
 		if (desired==true){
@@ -89,10 +90,16 @@ public class RegulatorConection extends Thread  {
 			byte[] msg=createACK((byte)2,(byte)0);
 			sendMessage(msg);
 			int i=0;int next_pos=0;int old_pos=0;int a=0;
+			for (int j = 0; j < message1.length; j++) {
+				System.out.println(message1[j]);
+			}
 			while(a<message1.length){	//i<tl.length
 				//System.out.println("aqui entrei "+length+ " " + message1[4+9 +next_pos]);
 				//cambio esto porque agora xa non sei o que espero.
+				 states=message1[4+9 +next_pos];
+				// System.out.println(states);
 				if (message1[4+9 +next_pos]!=0){
+					typeTemp e=new typeTemp();
 					message_response[i][0]=message1[4+8 +next_pos];//System.out.println("grupo "+message[4+8+ next_pos]);
 					message_response[i][1]=message1[4+10 + next_pos];//System.out.println("color "+message[4+10 + next_pos]);
 					message_response[i][2]=message1[4+11+ next_pos];//System.out.println("veo2 "+message[4+11+ next_pos]);
@@ -101,8 +108,22 @@ public class RegulatorConection extends Thread  {
 					message_response[i][5]=message1[4+14+ next_pos];
 					message_response[i][6]=message1[4+15+ next_pos];
 					message_response[i][7]=message1[4+16+ next_pos];
+					if(message1[4+9 +next_pos]>1){
+					message_response[i][8]=message1[4+17+ next_pos];
+					message_response[i][9]=message1[4+18+ next_pos];
+					message_response[i][10]=message1[4+19+ next_pos];
+					byte[] b2=new byte[2];
 
-					typeTemp e=new typeTemp();
+					b2[0]=message1[4+18+ next_pos];
+					b2[1]=message1[4+19+ next_pos];
+					e.Timer_last2=((b2[1]&0xff) * 256)+ b2[0]&0xff;
+					e.color2=message_response[i][8];
+					}else{
+						e.Timer_last2=0;
+						e.color2=0;
+						
+					}
+					
 					e.ID=(int)message_response[i][0]&0xff;
 					byte[] b=new byte[2];
 
@@ -112,26 +133,23 @@ public class RegulatorConection extends Thread  {
 					String s=new String(b,"UTF-8");
 					e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;//System.out.println(i+" e.Timer_last "+ e.Timer_last);
 					e.color=message_response[i][1];
-
+e.first=true;
 					int num=0;
 					Byte bb=(message_response[i][0]);System.out.println(e.ID);
 					if(this.List_ID.contains(e.ID)!=true){this.List_temp.add(e);this.List_ID.add(e.ID);}else {
-						num=this.List_ID.indexOf((int)message_response[i][0]&0xff);//System.out.println(num);
-						this.List_temp.set(num, e);		
-
+						num=this.List_ID.indexOf(e.ID);//System.out.println(num);
+						this.List_temp.set(num, e);	
 					}
 				}
-
-
 				next_pos=((int)message1[9+4+old_pos]*7) +2+old_pos;
 				old_pos=next_pos;
-
 				i++;
 				a=a+next_pos;
 			}}
 		System.out.println("ver lista");
 		for (int j = 0; j < this.List_temp.size(); j++) {
 			System.out.println("tempos na lista"+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
+			System.out.println("lista id:"+this.List_ID.get(j));
 		}
 		return(message_response);
 	}
@@ -262,7 +280,7 @@ public class RegulatorConection extends Thread  {
 	public void close_reg(){
 
 		this.isRunning=false;
-		close();
+	//	close();
 
 	}
 }

@@ -95,24 +95,31 @@ public class SpatGenerator extends Thread {
 			byte [][] response=new byte[100][4];
 			th1.arrayTLtopo=arrayTLtopo;
 			th1.intersectionId=intersectionId;
-		//	System.out.println("antes "+first1);
+			//	System.out.println("antes "+first1);
 			if (first1){//System.out.println("mau");
-			first1=false;th1.start();}
+				first1=false;th1.start();}
 
 			typeTemp element;
 			int num= th1.List_temp.size();int i=0;
 			if(th1.waitingResponse)th1.Temp100=th1.Temp100-(Integer.parseInt(Activator.spatFrequency)/100); if(th1.waitingACK)th1.Temp10=th1.Temp10-(Integer.parseInt(Activator.spatFrequency)/100);
-			
+
 			if(th1.Temp10<=0){th1.close();th1.Temp10=20;}else
-			if(th1.Temp100<=0){th1.close();th1.Temp100=200;}
+				if(th1.Temp100<=0){th1.close();th1.Temp100=200;}
 			List<typeTemp> clone1=th1.List_temp;
 			List<Integer> clone2=th1.List_ID;
 			while(i<num){
 				element=clone1.get(i);
-				element.Timer_last=element.Timer_last - (Integer.parseInt(Activator.spatFrequency)/100);
+				if(element.first)
+					element.Timer_last=element.Timer_last -( (Integer.parseInt(Activator.spatFrequency)/100)*(3/2));else
+						element.Timer_last=element.Timer_last -( (Integer.parseInt(Activator.spatFrequency)/100));
+				element.first=false;
 				if(element.Timer_last<=0){
-					clone1.remove(i);
-					clone2.remove(i);
+
+					if(element.Timer_last2 > 0){element.Timer_last=element.Timer_last2;element.color=element.color2;
+					element.Timer_last2=0;clone1.set(i, element);
+					}else{
+						clone1.remove(i);
+						clone2.remove(i);}
 				}else{ clone1.set(i,element);
 				i++;}
 				num=clone1.size();
@@ -144,7 +151,7 @@ public class SpatGenerator extends Thread {
 			long colortl1=0;
 			//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
 			for (int ii = 0; ii < arrayTL.length; ii++) {
-			//	System.out.println(arrayTLtopo[i] + " "+ laneset[i][0]);
+				//	System.out.println(arrayTLtopo[i] + " "+ laneset[i][0]);
 				i=clone1.get(ii).ID -1;
 				if (laneset[i][0]>=0)	{			
 					String[] tls = arraytype[i].split(",");
@@ -163,7 +170,7 @@ public class SpatGenerator extends Thread {
 					int column=0;	int column1=1;	int aa=0;	int row=0;		int pos=0;
 					if(response[ii][1]== 'D'){ colortl1=0x0;}else{
 						if(response[ii][1]== 'V'|| response[ii][1]== 'C'|| response[ii][1]== 'P'){
-							
+
 							column=check_colour(colorset[ii][2]);
 							if(response[ii][1]== 'C'|| response[ii][1]== 'P'){aa=1;column1=check_colour(colorset[ii][3]);}
 							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
@@ -172,16 +179,16 @@ public class SpatGenerator extends Thread {
 						}
 						else if(response[ii][1]== 'A' || response[ii][1]== 'F'|| response[ii][1]== 'N'|| response[ii][1]== 'J'|| response[ii][1]== 'I'|| response[ii][1]== 'G'|| response[ii][1]== 'S'|| response[ii][1]== 'E'|| response[ii][1]== 'K'|| response[ii][1]== 'Z')
 						{
-						column=check_colour(colorset[ii][1]);
-						if(response[ii][1]== 'E'|| response[ii][1]== 'K'|| response[ii][1]== 'F'|| response[ii][1]== 'Z'||response[ii][1]== 'J'|| response[ii][1]== 'I'|| response[ii][1]== 'G')
-						{column1=check_colour(colorset[ii][3]);aa=1;}
-						if(response[ii][1]== 'N'){column1=check_colour(colorset[ii][2]);aa=1;}
-						if(response[ii][1]== 'S')	{column1=check_colour(colorset[ii][0]);aa=1;}
-						if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
-						row=check_type(type_set[ii][pos]);System.out.println("Entrei en A " +column+ " "+row);
+							column=check_colour(colorset[ii][1]);
+							if(response[ii][1]== 'E'|| response[ii][1]== 'K'|| response[ii][1]== 'F'|| response[ii][1]== 'Z'||response[ii][1]== 'J'|| response[ii][1]== 'I'|| response[ii][1]== 'G')
+							{column1=check_colour(colorset[ii][3]);aa=1;}
+							if(response[ii][1]== 'N'){column1=check_colour(colorset[ii][2]);aa=1;}
+							if(response[ii][1]== 'S')	{column1=check_colour(colorset[ii][0]);aa=1;}
+							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
+							row=check_type(type_set[ii][pos]);System.out.println("Entrei en A " +column+ " "+row);
 
 						}else if(response[ii][1]== 'R'|| response[ii][1]== 'B'|| response[ii][1]== 'H'){
-				
+
 							column=check_colour(colorset[ii][0]);
 							if(response[ii][1]== 'B'|| response[ii][1]== 'H'){column1=check_colour(colorset[ii][3]);aa=1;}
 							if (column==0)pos=2;else if (column==2)pos=0; else pos=column;
@@ -216,7 +223,7 @@ public class SpatGenerator extends Thread {
 					ia++;
 				}		
 				for (int j = 0; j < laneset1.length; j++) {
-			//		System.out.println(i+" laneset1 "+laneset1[j]+" "+laneset1.length);
+					//		System.out.println(i+" laneset1 "+laneset1[j]+" "+laneset1.length);
 				}
 				//
 				movementstate.get(ii).setLaneSet(laneset1);
@@ -235,7 +242,7 @@ public class SpatGenerator extends Thread {
 					sum=sum1+sum2*256;
 					movementstate.get(ii).setTimeToChange(sum);
 				}
-				System.out.println("Eu calculo: time to change:"+sum+ " color:"+colortl1+ " laneset1:"+laneset1[0]+" grupo semafórico;"+i);
+				System.out.println("Eu calculo: time to change:"+sum+ " color:"+colortl1+ " laneset1:"+laneset1[0]+" grupo semafórico;"+(i+1));
 				//	System.out.println("Colors: " + colortl1 );
 				//	System.out.println("Time: " + sum);
 
@@ -251,7 +258,7 @@ public class SpatGenerator extends Thread {
 	//spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
 
 }**/
-				
+
 
 			System.out.println("return spat");
 			if (th1.connect)return spat;else return null;
