@@ -22,11 +22,8 @@ public class SpatGenerator extends Thread {
 	private int intersectionId;
 
 	public boolean first1=true;
-	//RegulatorConection client;
 	private  RegulatorConection th1=new RegulatorConection() ;
-	public SpatGenerator() {
-		//	client = new RegulatorConection();
-	}
+	public SpatGenerator() {	}
 
 	public int check_colour(char colour){
 
@@ -59,14 +56,10 @@ public class SpatGenerator extends Thread {
 					{ 0x1000   ,0x2000   ,0x4000   ,0x8000}};
 			int[] arrayTLtopo=new int[11];//strTLTopo.length
 			String[] arraytype=new String[11];
-			//	System.out.println(strTLTopo[0]+" strTLTopo[0]");
-			//System.out.println(strTLTopo[1]);System.out.println("strTLTopo[1]");
 			String lanes;int lon=0;
 			int [][] laneset=new int[255][127];
 			boolean pedestrian=false;
 			for (int i = 0; i < strTLTopo.length; i++) {
-
-				//System.out.println(strTLTopo[i]+" strTLTopo");
 				lon=strTLTopo[i].split(";").length;
 				if (lon==4){pedestrian=false;
 				arrayTLtopo[i]=Integer.parseInt(strTLTopo[i].split(";")[0]);	//grupo de semaforo; lineas separadas por comas;{color tipo}
@@ -74,14 +67,10 @@ public class SpatGenerator extends Thread {
 				lanes=strTLTopo[i].split(";")[1];
 				intersectionId=Integer.parseInt(strTLTopo[i].split(";")[3]);
 				String[] laneSetsString=lanes.split(",");
-				//	System.out.println(lanes);System.out.println("lanes");
-				//laneset[][]=new int[strTLTopo.length][laneSetsString.length];
 				for(int j=0; j<laneSetsString.length;j++){
 					laneset[i][j]=Integer.parseInt(laneSetsString[j]);
 				}
 				}else{pedestrian=true;
-				//arraytype[i]=strTLTopo[i].split(";")[2];
-				//arrayTLtopo[i]=Integer.parseInt(strTLTopo[i].split(";")[1]);	
 				lanes=strTLTopo[i].split(";")[1];
 				intersectionId=Integer.parseInt(strTLTopo[i].split(";")[0]);
 				String[] laneSetsString=lanes.split(",");
@@ -91,7 +80,6 @@ public class SpatGenerator extends Thread {
 				}}
 			spatKml = Activator.spatKML.split("/");
 			spatKmlPoint = spatKml[1].split("\\.");
-			//intersectionId = Integer.parseInt(spatKmlPoint[0]); //cambialo por o [0] onde estaba antes o grupo de semaforo e poñer +1 o que está o split de strTLTopo[i]
 			byte [][] response=new byte[100][4];
 			th1.arrayTLtopo=arrayTLtopo;
 			th1.intersectionId=intersectionId;
@@ -114,12 +102,8 @@ public class SpatGenerator extends Thread {
 						element.Timer_last=element.Timer_last -( (Integer.parseInt(Activator.spatFrequency)/100));
 				element.first=false;
 				if(element.Timer_last<=0){
-
-					if(element.Timer_last2 > 0){element.Timer_last=element.Timer_last2;element.color=element.color2;
-					element.Timer_last2=0;clone1.set(i, element);
-					}else{
 						clone1.remove(i);
-						clone2.remove(i);}
+						clone2.remove(i);
 				}else{ clone1.set(i,element);
 				i++;}
 				num=clone1.size();
@@ -139,9 +123,7 @@ public class SpatGenerator extends Thread {
 				arrayTL[i]=(int)response[i][0]&0xff;//System.out.println("arraytltopo"+arrayTLtopo[i]);
 			}
 			if (response==null){			System.out.println("No conection" );return null;}
-			//	System.out.println("regreso de sending" +" "+0x03+" "+ response[0][0]+" "+response[0][1]);//+" "+response[1][0]);
-			//int tlLengh = strTLTopo.length;
-			spat = itsMessagesSenderService.createSpat();
+				spat = itsMessagesSenderService.createSpat();
 			spat.setMsdId(DSRCMessageID.SIGNALPHASEANDTIMINGMESSAGE);
 			intersectionstate = spat.createIntersectionState(1);//está bien
 			intersectionstate.get(0).setIdIntersectionState(intersectionId);
@@ -149,9 +131,7 @@ public class SpatGenerator extends Thread {
 			intersectionstate.get(0).setIntersectionStatus(0); // estados de 0 a 7
 			movementstate = intersectionstate.get(0).createMovementState(arrayTL.length);
 			long colortl1=0;
-			//	System.out.println("lonxitudes "+strTLTopo.length+" "+arraytype.length);
 			for (int ii = 0; ii < arrayTL.length; ii++) {
-				//	System.out.println(arrayTLtopo[i] + " "+ laneset[i][0]);
 				i=clone1.get(ii).ID -1;
 				if (laneset[i][0]>=0)	{			
 					String[] tls = arraytype[i].split(",");
@@ -204,13 +184,7 @@ public class SpatGenerator extends Thread {
 					else if(response[ii][1]== 'R'|| response[ii][1]== 'S')colortl1=0x4;	
 
 				}
-				//System.out.println("rellena laneset");
 				movementstate.get(ii).setMovementName("STATE"+"+i+");// no es necesario
-				/**for (int j = 0; j < laneset.length; j++) {
-					System.out.println(laneset[j] );
-				}**/
-				//
-
 				int a=1;int ia=0;
 
 				while(a==1){
@@ -228,15 +202,11 @@ public class SpatGenerator extends Thread {
 				//
 				movementstate.get(ii).setLaneSet(laneset1);
 				movementstate.get(ii).setCurrState(colortl1);
-				//System.out.println("tiempos "+response[i][2]+" "+ response[i][3]+" "+ response[i][4]+" "+ response[i][5]);
-				byte[] b={response[ii][2],response[ii][3]}; //correcto para os casos que non sexa -1, como se faría noutro caso??
+	//correcto para os casos que non sexa -1, como se faría noutro caso??
 				int sum1=response[ii][3]&(0xff);
 				int sum2= response[ii][2]&(0xff);
 				int sum=sum1+sum2*256;
-
-				//System.out.println(str);
 				if ( response[i][3]!=-1)movementstate.get(ii).setTimeToChange(sum);else{
-					byte [] c={response[ii][6],response[ii][7]}; 
 					sum1=response[ii][7]&(0xff);
 					sum2= response[ii][6]&(0xff);
 					sum=sum1+sum2*256;
@@ -248,26 +218,12 @@ public class SpatGenerator extends Thread {
 
 			}
 			intersectionstate.get(0).setMovementState(movementstate);
-
 			spat.setIntersectionState(intersectionstate);
-
 			int len=spat.getIntersectionState().get(0).getMovementState().size();
-			/**for (int j = 0; j < len; j++) {
-	//	System.out.println("Para i= "+j+" "+spat.getIntersectionState().get(0).getMovementState().get(j).getTimeToChange()+" "+
-	//spat.getIntersectionState().get(0).getMovementState().get(j).getCurrState()+" "+
-	//spat.getIntersectionState().get(0).getMovementState().get(j).getLaneSet()[0]);
-
-}**/
-
-
-			System.out.println("return spat");
+		System.out.println("return spat");
 			if (th1.connect)return spat;else return null;
-
-			//	}
-			//	return null;
 		}
 		public void close(){
-			//	client.close_reg();
 			this.th1.close_reg();
 		}
 }

@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
 	private final static Logger logger = LoggerFactory
 			.getLogger(Activator.class);
 
-	public static BundleContext bundleContext = null;
+	public BundleContext bundleContext = null;
 
 	private ServiceTracker itsMessagesSenderServiceTracker = null;
 

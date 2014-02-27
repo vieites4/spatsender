@@ -39,6 +39,7 @@ public final class TLTopology {
 
 	// Intersection Point
 	private String intersectionId = null;
+	private String regulatorId = null;
 	private String laneDescripcionIntersec = null;
 
 	// Lanes
@@ -55,9 +56,7 @@ public final class TLTopology {
 	private String tlType = null;
 	private String tlNum = "";
 	private String laneID = null;
-	private String regulatorId=null;
 	private int trackId = 0;
-	String[] movements;
 	String[] tableOfEgress;
 
 	private String namePlacemark = null;
@@ -154,17 +153,16 @@ public final class TLTopology {
 							}
 
 						}
-						movements = new String[accessTable.length];
+
 						tableOfEgress = new String[accessTable.length];
-						for (int i = 0; i < movements.length; i++) {
-							movements[i] = "";
+						for (int i = 0; i < tableOfEgress.length; i++) {
 							tableOfEgress[i] = "";
 						}
 						// Reference Point description
 						laneCad = laneDescripcionIntersec.split(",");
 						// Interseccion Id
 						intersectionId = laneCad[0];
-						regulatorId=laneCad[5];
+						regulatorId = laneCad[5];
 					}
 
 					// Description of lanes
@@ -222,37 +220,6 @@ public final class TLTopology {
 									trackId = i;
 								}
 							}
-
-							String[] arrayPossibleTurns = possibleTurns
-									.split(":");
-							String[] arrayTlIfTurn = tlIfTurn.split(":");
-							for (int i = 0; i < arrayPossibleTurns.length; i++) {
-
-								arrayPossibleTurns[i] = arrayPossibleTurns[i]
-										.replace("{", "");
-								arrayPossibleTurns[i] = arrayPossibleTurns[i]
-										.replace("(", "");
-								arrayPossibleTurns[i] = arrayPossibleTurns[i]
-										.replace(")", "");
-								arrayTlIfTurn[i] = arrayTlIfTurn[i].replace(
-										"}", "");
-								arrayTlIfTurn[i] = arrayTlIfTurn[i].replace(
-										"(", "");
-								arrayTlIfTurn[i] = arrayTlIfTurn[i].replace(
-										")", "");
-
-								if (!movements[trackId]
-										.contains(arrayPossibleTurns[i] + "-"
-												+ arrayTlIfTurn[i])) {
-									movements[trackId] = movements[trackId]
-											+ arrayPossibleTurns[i] + "-"
-											+ arrayTlIfTurn[i] + "-";
-								}
-
-							}
-
-							// TL,APPROACH(APPROACHTL = APPROACH+1 || APPROACH=0
-							// IF APPROACHLENGH),LANES(ACCESTABLE[APPROACHTL])
 
 						} else { // EGRESS
 							// Number of Approach [Y]
@@ -350,72 +317,16 @@ public final class TLTopology {
 			}
 		}
 
-		// Sorted Traffic Lights with Type (TL;LANES;TYPE)
+		// Sorted Traffic Lights with Type (TL;LANES;TYPE;REGULATOR)
 		for (int i = 0; i < tlLaneTypeSortedBlank.length; i++) {
 			if (!tlLaneTypeSortedBlank[i].equalsIgnoreCase(""))
 				tlLaneTypeSortedBlank[i] = tlLaneTypeSortedBlank[i].substring(
 						0, tlLaneTypeSortedBlank[i].length() - 1);
 			tlLaneTypeSortedBlank[i] = tlLaneTypeSortedBlank[i] + ";{"
-					+ tlTypeSortedBlank[i]+";"+regulatorId;
+					+ tlTypeSortedBlank[i] + ";" + regulatorId;
 		}
 
-		/* Calculation of tl of the egress if turn */
-		int contTurnsTl = 0;
-		String[] egresstl = new String[20];
-		for (int i = 0; i < movements.length; i++) {
-			 System.out.println(movements[i]); //
-			// TURN-TLIFTURN-TURN-TLIFTURN-TURN-TLIFTURN
-			 //System.out.println(tableOfEgress[i]);
-			String[] movementstl = movements[i].split("-");
-			for (int j = 0; j < movementstl.length; j++) {
-				if (j % 2 == 1) {
-					if (!movementstl[j].equalsIgnoreCase("0")) {
-						if (movementstl[j - 1].equalsIgnoreCase("R")) {
-							if (i == movements.length-1) {
-							//	System.out.println("tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[0]);
-								egresstl[contTurnsTl] = movementstl[j] + ";"
-										+ tableOfEgress[0];
-								contTurnsTl++;
-							} else {
-								//System.out.println("tl= " + movementstl[j]+" Egressapproach= "	+ tableOfEgress[i + 1]);
-								egresstl[contTurnsTl] = movementstl[j] + ";"
-										+ tableOfEgress[i + 1];
-								contTurnsTl++;
-							}
-
-						} else if (movementstl[j - 1].equalsIgnoreCase("L")) {
-							if (i == 0) {
-							//	System.out.println(" tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[movements.length-1]);
-								egresstl[contTurnsTl] = movementstl[j] + ";"
-										+ tableOfEgress[movements.length-1];
-								contTurnsTl++;
-							} else {
-							//	System.out.println("tl= " + movementstl[j]	+ " Egressapproach= "+ tableOfEgress[i - 1]);
-								egresstl[contTurnsTl] = movementstl[j] + ";"
-										+ tableOfEgress[i - 1];
-								contTurnsTl++;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		String[] tlstotal = new String[tlLaneTypeSortedBlank.length
-				+ contTurnsTl];
-		int contTlEgress = 0;
-		for (int i = 0; i < tlstotal.length; i++) {
-			if (i < tlLaneTypeSortedBlank.length) {
-				tlstotal[i] = tlLaneTypeSortedBlank[i];
-			} else {
-				egresstl[contTlEgress] = egresstl[contTlEgress].substring(0,
-						egresstl[contTlEgress].length() - 1);
-				tlstotal[i] = egresstl[contTlEgress] + ";{(A:A:-),(L:L:-)};"+regulatorId;
-				contTlEgress++;
-			}
-		}
-
-		return tlstotal;
+		return tlLaneTypeSortedBlank;
 
 	}
 }

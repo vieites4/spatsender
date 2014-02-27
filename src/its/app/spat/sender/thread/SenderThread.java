@@ -1,8 +1,6 @@
 package its.app.spat.sender.thread;
 
 import java.io.IOException;
-import java.util.Vector;
-
 import javax.xml.parsers.ParserConfigurationException;
 
 import its.app.spat.sender.bundle.Activator;
@@ -21,65 +19,24 @@ import org.xml.sax.SAXException;
 
 public class SenderThread extends Thread {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(SenderThread.class);
-
+	private final static Logger logger = LoggerFactory.getLogger(SenderThread.class);
 	public  boolean isRunning = false;
 	private boolean isServiceRegistered = false;
 	private SpatGenerator spatGenerator;
 	private TLTopology tlTopology;
-	private ItsMessagesSenderService itsMessagesSenderService = null;
-	TLSimulator tl1;
-	TLSimulator tl2;
-	TLSimulator tl3;
-	long time0;
-	long time1;
-	long time2;
+	public ItsMessagesSenderService itsMessagesSenderService = null;
+	TLSimulator tl1;	TLSimulator tl2;	TLSimulator tl3;
+	long time0;	long time1;	long time2;
 	String[] strTLTopo;
 
-	public SenderThread(BundleContext bundleContext) {
-	//	logger.info("SPATSender: SPAT frequency is " + Activator.spatFrequency);
-		//logger.info("SPATSender: SPAT KML " + Activator.spatKML);
-		
+	public SenderThread(BundleContext bundleContext) {		
 		this.tlTopology = new TLTopology();
 		try {
-			strTLTopo= this.tlTopology.generateTLTopology(Activator.spatKML);
-			
-		/**	for (int i = 0; i < strTLTopo.length; i++) {
-				System.out.println(strTLTopo[i]);
-			}**/
-			
-			
-		} catch (ValueOutOfRangeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		/**
-		tl1 = new TLSimulator();
-		tl1.setTime(180);
-		tl1.setColor(1);
-		tl1.start();
-		
-		tl2 = new TLSimulator();
-		tl2.setTime(180);
-		tl2.setColor(1);
-		tl2.start();
-		
-		tl3 = new TLSimulator();
-		tl3.setTime(180);
-		tl3.setColor(4);
-		tl3.start();**/
+			strTLTopo= this.tlTopology.generateTLTopology(Activator.spatKML);	
+		} catch (ValueOutOfRangeException e) {e.printStackTrace();
+		} catch (SAXException e) {e.printStackTrace();
+		} catch (IOException e) {e.printStackTrace();
+		} catch (ParserConfigurationException e) {	e.printStackTrace();	}
 
 		this.isRunning = true;
 		this.isServiceRegistered = false;
@@ -88,6 +45,7 @@ public class SenderThread extends Thread {
 	public final void setItsMessagesSenderService(
 			ItsMessagesSenderService itsMessagesSenderService) {
 		this.itsMessagesSenderService = itsMessagesSenderService;
+		System.out.println("istsmessages");
 	}
 
 	public final void checkServiceRegisterer() {
@@ -100,54 +58,37 @@ public class SenderThread extends Thread {
 
 	public final void serviceUnregister() {
 		this.isServiceRegistered = false;
-	//	SpatGenerator.th1.interrupted();
 	}
 
 	public final synchronized void run() {
 		while (this.isRunning) {
 			long time = System.currentTimeMillis();
 			if (this.isServiceRegistered) {
-				try {
-					
-					Spat spat = this.spatGenerator.generateSpatMessage(	itsMessagesSenderService, strTLTopo);		
-					
-					
+				try {					
+					Spat spat = this.spatGenerator.generateSpatMessage(	itsMessagesSenderService, strTLTopo);						
 					if (spat != null) {	itsMessagesSenderService.send(spat);
 						logger.info("SPATSender: spat messages has been sent to GNBTPAPI on BTP port " + spat.toString());
-					}//else {System.out.println("spat==null");}
+					}
 				} catch (MessageIncompleteException e) {
 					logger.error("SPATSender: error sending spat messages "	+ e.getMessage());
-				} catch (ValueOutOfRangeException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			//esta parte é a que facia que esperásemos 0.5 segundos entre execucions do generateSpatMessage. Agora executarase continuamente.
-			try {
+				} catch (ValueOutOfRangeException e) {e.printStackTrace();
+				} catch (InterruptedException e) {e.printStackTrace();
+				}			}
+					try {
 				long timeToSleep = (long) (Double
 						.parseDouble(Activator.spatFrequency) - (System
 						.currentTimeMillis() - time));
 				if (timeToSleep > 0l)
 					Thread.sleep(timeToSleep);
 			} catch (InterruptedException interruptedException) {
-				logger.error("SPATSender: Send thread has been interrupted "
-						+ interruptedException.getMessage());
+				logger.error("SPATSender: Send thread has been interrupted "+ interruptedException.getMessage());
 			}
-
 		}
 	}
 
 	public final void stopSenderThread() {
 		this.isRunning = false;
 		spatGenerator.close();
-// NOT NECESARY STOP
-//		tl1.stopTL();
-//		tl2.stopTL();
-//		tl3.stopTL();
-		//System.out.println("Stopping sending SPAT");
+	System.out.println("Stopping sending SPAT");
 	}
 }
