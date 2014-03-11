@@ -45,7 +45,7 @@ public class SenderThread extends Thread {
 	public final void setItsMessagesSenderService(
 			ItsMessagesSenderService itsMessagesSenderService) {
 		this.itsMessagesSenderService = itsMessagesSenderService;
-		System.out.println("istsmessages");
+		//System.out.println("istsmessages");
 	}
 
 	public final void checkServiceRegisterer() {
@@ -89,6 +89,6 @@ public class SenderThread extends Thread {
 	public final void stopSenderThread() {
 		this.isRunning = false;
 		spatGenerator.close();
-	System.out.println("Stopping sending SPAT");
+	//System.out.println("Stopping sending SPAT");
 	}
 }
