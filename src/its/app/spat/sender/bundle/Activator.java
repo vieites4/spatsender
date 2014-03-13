@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+ 
 public class Activator implements BundleActivator {
 
 	private final static Logger logger = LoggerFactory
@@ -24,7 +24,8 @@ public static volatile String spatRegIp="195.77.187.234";
 	public static volatile String spatFrequency = "2000";
 	public static volatile String spatKML = "kml/001.kml";
 
-	
+	// SpatSender is RSU part of EEIS. Here we consult regulator about Traffic Light's colour and times. We send SPAT messages
+	//with this information to OBUs.
 	public void start(BundleContext paramBundleContext) {
 
 		bundleContext = paramBundleContext;

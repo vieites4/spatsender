@@ -16,8 +16,8 @@ public class RegulatorConection extends Thread  {
 	public List<typeTemp> List_temp=new ArrayList<typeTemp> ();
 	public List<Integer> List_ID=new ArrayList<Integer> ();
 	public int intersectionId;
-	public int[] arrayTLtopo;
-	public boolean waitingACK=false;
+	public int[] arrayTLtopo;  
+	public boolean waitingACK=false; 
 	public boolean waitingResponse=false;
 	public boolean connect=true;
 	public int  Temp10=20;
@@ -27,7 +27,6 @@ public class RegulatorConection extends Thread  {
 	ObjectOutputStream out;
 	boolean newConnection;
 	BufferedReader br;
-	//ObjectInputStream in;//={0x02,0x00,0x03,0x33,0x04,0x05,0x06,0x03};
 	InputStream in;
 	int [] arrayGlobal;
 	int intersectionIdGlobal;
@@ -50,7 +49,11 @@ public class RegulatorConection extends Thread  {
 			System.out.println("message rx");
 			this.Temp100=200;}
 		boolean desired=(message[0]==0x2) && (message[6]==0x03) && (message[3]==ACK);
+		
+
 		byte[] message1=new byte[length];//=message;
+		
+		
 		if (desired ==true){
 			System.out.println("ack recibido" + length);
 			this.Temp10=20;this.waitingACK=false;message1=new byte[length];
@@ -60,6 +63,11 @@ public class RegulatorConection extends Thread  {
 			}
 			//} else	length=in.read(message1);
 			}}else{message1=new byte[length];message1=message;}
+		for (int i = 0; i < message1.length; i++) {
+			System.out.print(""+ (int)message1[i]+ " ");
+		}System.out.println(" message");
+		
+		
 		if((desired&&(length==7))==false){
 			byte[][]message_response=new byte[9][11];//o 9 é un exemplo, teño que poñer o axeitado
 			boolean desired1=(message1[0]==0x02)&& (message1[3]==2);
@@ -73,19 +81,23 @@ public class RegulatorConection extends Thread  {
 			length_mes=message[7+1]*256+message[7+2];id_m=message[7+3];
 			}else{if(message[2]<0)val=256+message[2];else val=(int)message[2];
 			length_mes=message[1]*256+val;id_m=message[3];}
-		//	System.out.println("longitud "+length_mes+ " "+length+ " "+val);
 			int error=0;
 			if((length-4)!=length_mes)error=1;else if(id_m!=2)error=2;
 			byte[] msg1 = createACK((byte)2,(byte)0); 
+			
+		/**	for (int i = 0; i < message1.length; i++) {
+				System.out.print(message1[i]+ " ");
+			}System.out.println();**/
 			sendMessage(msg1);
 			if (error==0){
 
 				int i=0;int next_pos=0;int old_pos=0;int a=0;
-				while(a<message1.length){	
+				if(message1[13]!=0){
+				while(a<(length-1)){	
 					if (message1[4+9 +next_pos]!=0){
 						typeTemp e=new typeTemp();
-						message_response[i][0]=message1[4+8 +next_pos];//System.out.println("grupo "+message[4+8+ next_pos]);
-						message_response[i][1]=message1[4+10 + next_pos];//System.out.println("color "+message[4+10 + next_pos]);
+						message_response[i][0]=message1[4+8 +next_pos];System.out.println("grupo "+message[4+8+ next_pos]);
+						message_response[i][1]=message1[4+10 + next_pos];System.out.println("color "+message[4+10 + next_pos]);
 						message_response[i][2]=message1[4+11+ next_pos];//System.out.println("veo2 "+message[4+11+ next_pos]);
 						message_response[i][3]=message1[4+12+ next_pos];//System.out.println("veo2 "+message[4+12+ next_pos]);
 						message_response[i][4]=message1[4+13+ next_pos];//System.out.println("voeo-1? "+message[4+13+ next_pos]);
@@ -97,8 +109,8 @@ public class RegulatorConection extends Thread  {
 							message_response[i][9]=message1[4+18+ next_pos];
 							message_response[i][10]=message1[4+19+ next_pos];
 							byte[] b2=new byte[2];
-							b2[0]=message1[4+18+ next_pos];
-							b2[1]=message1[4+19+ next_pos];
+							b2[0]=message1[4+19+ next_pos];
+							b2[1]=message1[4+18+ next_pos];
 							e.Timer_last2=((b2[1]&0xff) * 256)+ b2[0]&0xff;
 							e.color2=message_response[i][8];
 						}else{
@@ -109,25 +121,24 @@ public class RegulatorConection extends Thread  {
 						byte[] b=new byte[2];
 						b[0]=message1[4+12+ next_pos];
 						b[1]=message1[4+11+ next_pos];
-						e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;//System.out.println(i+" e.Timer_last "+ e.Timer_last);
+						e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;
 						e.color=message_response[i][1];
 						e.first=true;
 						int num=0;
-						//System.out.println(e.ID);
 						if(this.List_ID.contains(e.ID)!=true){this.List_temp.add(e);this.List_ID.add(e.ID);}else {
-							num=this.List_ID.indexOf(e.ID);//System.out.println(num);
+							num=this.List_ID.indexOf(e.ID);
 							this.List_temp.set(num, e);	
 						}
 					}
 					next_pos=((int)message1[9+4+old_pos]*7) +2+old_pos;
 					old_pos=next_pos;
 					i++;
+					
 					a=a+next_pos;
-				}}
-			//System.out.println("ver lista");
+					//System.out.println("a "+a );
+				}}else{message_response=null;}}
 			for (int j = 0; j < this.List_temp.size(); j++) {
-			//	System.out.println("tempos na lista"+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
-			//	System.out.println("lista id:"+this.List_ID.get(j));
+				System.out.println("tempos na lista "+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
 			}System.out.println("envia message_response");
 			return(message_response);
 		}return(null);
