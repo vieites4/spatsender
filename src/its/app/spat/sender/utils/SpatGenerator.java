@@ -43,19 +43,19 @@ public class SpatGenerator extends Thread {
 
 		//	//System.out.println("entro en generateSpatMessage" );
 
-		long[][] kml=  {
+	/**	long[][] kml=  {
 				{ 0x01     ,0x02     ,0x04    , 0x08},
 				{ 0x10     ,0x20     ,0x40     ,0x80},
 				{ 0x100    ,0x200    ,0x400    ,0x800},
-				{ 0x1000   ,0x2000   ,0x4000   ,0x8000}};
+				{ 0x1000   ,0x2000   ,0x4000   ,0x8000}};**/
 		int[] arrayTLtopo=new int[11];//strTLTopo.length
 		String[] arraytype=new String[11];
 		String lanes;int lon=0;
 		int [][] laneset=new int[255][127];
-		boolean pedestrian=false;//System.out.println("strTLTopo.length "+strTLTopo.length );
+	//	boolean pedestrian=false;//System.out.println("strTLTopo.length "+strTLTopo.length );
 		for (int i = 0; i < strTLTopo.length; i++) {
 			lon=strTLTopo[i].split(";").length;
-			if (lon==4){pedestrian=false;
+			if (lon==4){//pedestrian=false;
 			arrayTLtopo[i]=Integer.parseInt(strTLTopo[i].split(";")[0]);	//grupo de semaforo; lineas separadas por comas;{color tipo}
 			arraytype[i]=strTLTopo[i].split(";")[2];//System.out.println("arraytype"+arraytype[i]);
 			lanes=strTLTopo[i].split(";")[1];
@@ -134,10 +134,12 @@ public class SpatGenerator extends Thread {
 		intersectionstate.get(0).setIdIntersectionState(intersectionId);
 		intersectionstate.get(0).setTimeStamp(58); // No hay falta cubrirlo, sino poner la hora de la notificación
 		intersectionstate.get(0).setIntersectionStatus(0); // estados de 0 a 7
+		int val=clone1.size();
+		movementstate = intersectionstate.get(0).createMovementState(val);
 		
-		movementstate = intersectionstate.get(0).createMovementState(clone1.size());
+		System.out.println("lonxitude do movementstate"+clone1.size());
 		long colortl1=0;int ii;int[] index=null;
-		for ( i = 0; i < clone1.size(); i++) {
+		for ( i = 0; i < val; i++) {
 			//	i=clone1.get(ii).ID -1;
 			ii=i;//
 			for (int j = 0; j < laneset.length; j++) {
@@ -173,8 +175,8 @@ public class SpatGenerator extends Thread {
 				//	System.out.println("Entrei en R ");// +column+ " "+row);
 				colortl1=4;
 			} 
-
-			movementstate.get(i).setMovementName("STATE"+"+i+");// no es necesario
+			System.out.println("setMovementName"+i);
+			movementstate.get(ii).setMovementName("STATE"+"+i+");// no es necesario
 			int a=1;int ia=0;//int ie=0;
 
 			while(a==1){
@@ -203,7 +205,7 @@ public class SpatGenerator extends Thread {
 				movementstate.get(i).setTimeToChange(sum);
 			}**/
 			//System.out.println("Eu calculo: time to change:"+sum+ " color:"+colortl1+ " laneset1:"+laneset1[0]+" grupo semafórico;"+(i+1));
-			System.out.println("No spat: time to change:"+movementstate.get(i).getTimeToChange()+ " color:"+movementstate.get(i).getCurrState()+ " laneset1:"+movementstate.get(i).getLaneSet()[0]+" grupo semafórico;"+(i+1));
+			System.out.println("No spat: time to change:"+movementstate.get(i).getTimeToChange()+ " color:"+movementstate.get(i).getCurrState()+ " laneset1:"+movementstate.get(i).getLaneSet()[0]+" grupo semafórico;"+index[0]);
 			
 			////	System.out.println("Colors: " + colortl1 );
 			//	System.out.println("Time: " + sum);

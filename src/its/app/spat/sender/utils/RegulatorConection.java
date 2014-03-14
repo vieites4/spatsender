@@ -118,16 +118,22 @@ public class RegulatorConection extends Thread  {
 							e.color2=0;						
 						}					
 						e.ID=(int)message_response[i][0]&0xff;
-						byte[] b=new byte[2];
-						b[0]=message1[4+12+ next_pos];
-						b[1]=message1[4+11+ next_pos];
-						e.Timer_last=((b[1]&0xff) * 256)+ b[0]&0xff;
+						int[] b=new int[2];
+						b[0]=(int)message1[4+12+ next_pos]&0xff;
+						b[1]=(int)message1[4+11+ next_pos]&0xff;
+						e.Timer_last=(b[1]* 256)+ b[0];
 						e.color=message_response[i][1];
 						e.first=true;
 						int num=0;
-						if(this.List_ID.contains(e.ID)!=true){this.List_temp.add(e);this.List_ID.add(e.ID);}else {
-							num=this.List_ID.indexOf(e.ID);
-							this.List_temp.set(num, e);	
+						int io=0;boolean contains=false;
+						while(io<this.List_ID.size() && contains==false){
+							if (this.List_ID.get(io)==e.ID)contains=true;
+							io++;
+						}
+						
+						if(contains==false){System.out.println("entra no contains");this.List_temp.add(e);this.List_ID.add(e.ID);}else {
+							num=io-1;
+							this.List_temp.set(num, e);	System.out.println("entra CONTAINS");
 						}
 					}
 					next_pos=((int)message1[9+4+old_pos]*7) +2+old_pos;
@@ -138,7 +144,7 @@ public class RegulatorConection extends Thread  {
 					//System.out.println("a "+a );
 				}}else{message_response=null;}}
 			for (int j = 0; j < this.List_temp.size(); j++) {
-				System.out.println("tempos na lista "+this.List_temp.get(j).ID+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
+				System.out.println("tempos na lista "+this.List_ID.get(j)+" "+this.List_temp.get(j).Timer_last+ "color: "+this.List_temp.get(j).color);
 			}System.out.println("envia message_response");
 			return(message_response);
 		}return(null);
