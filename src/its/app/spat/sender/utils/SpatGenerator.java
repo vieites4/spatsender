@@ -6,6 +6,8 @@ import its.fac.messages.api.services.ItsMessagesSenderService;
 import its.fac.messages.api.types.IntersectionState;
 import its.fac.messages.api.types.MovementState;
 import its.fac.messages.api.types.Spat;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Vector;
@@ -36,10 +38,11 @@ public class SpatGenerator extends Thread {
 
 		if(type.equals(Ball))return(0);else if(type.equals(Left_arrow))return(1);else if(type.equals(Right_arrow))return(2);
 		else if(type.equals(Straight_arrow))return(3);else if(type.equals(Soft_left_arrow))return(4);else if(type.equals(Soft_right_arrow))return(5);
-		else if(type.equals(U_turn_arrow))return(6);else return(7);	};**/
+		else if(type.equals(U_turn_arrow))return(6);else return(7);	};
+	 * @throws IOException **/
 
 	public Spat generateSpatMessage(	ItsMessagesSenderService itsMessagesSenderService, String[] strTLTopo)
-			throws ValueOutOfRangeException, InterruptedException {
+			throws ValueOutOfRangeException, InterruptedException, IOException {
 
 		//	//System.out.println("entro en generateSpatMessage" );
 
@@ -92,8 +95,8 @@ public class SpatGenerator extends Thread {
 		int num= th1.List_temp.size();int i=0;
 		if(th1.waitingResponse)th1.Temp100=th1.Temp100-(Integer.parseInt(Activator.spatFrequency)/100); if(th1.waitingACK)th1.Temp10=th1.Temp10-(Integer.parseInt(Activator.spatFrequency)/100);
 		//esto estaba eliminado por funcionar mal, pero ahora lo modifiqué, a ver si funciona
-		if(th1.Temp10<=0){th1.close_reg();th1.run();th1.Temp10=10000*(1/Integer.parseInt(Activator.spatFrequency));}else
-			if(th1.Temp100<=0){th1.close_reg();th1.run();th1.Temp100=100000*(1/Integer.parseInt(Activator.spatFrequency));}
+		if(th1.Temp10<=0){th1.close_reg_timer();th1.Temp10=10000*(1/Integer.parseInt(Activator.spatFrequency));}else
+		if(th1.Temp100<=0){th1.close_reg_timer();th1.Temp100=100000*(1/Integer.parseInt(Activator.spatFrequency));}
 		//
 		List<typeTemp> clone1=th1.List_temp;
 		List<Integer> clone2=th1.List_ID;
@@ -163,7 +166,7 @@ public class SpatGenerator extends Thread {
 					int column=0;	int column1=1;	int aa=0;	int row=0;		int pos=0;**/
 			//	if(response[ii][1]== 'D'){ colortl1=0x0;}else{
 			if(response[ii][1]==82){//|| response[ii][1]== 'C'|| response[ii][1]== 'P'){
-				colortl1=1;
+				colortl1=4;
 				//	System.out.println("Entrei en V " );//+column+ " "+row);
 
 			}
@@ -173,7 +176,7 @@ public class SpatGenerator extends Thread {
 				colortl1=2;
 			}else if(response[ii][1]==86){//|| response[ii][1]== 'B'|| response[ii][1]== 'H'){
 				//	System.out.println("Entrei en R ");// +column+ " "+row);
-				colortl1=4;
+				colortl1=1;
 			} 
 			System.out.println("setMovementName"+i);
 			movementstate.get(ii).setMovementName("STATE"+"+i+");// no es necesario

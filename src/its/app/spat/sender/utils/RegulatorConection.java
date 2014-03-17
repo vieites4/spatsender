@@ -22,6 +22,7 @@ public class RegulatorConection extends Thread  {
 	public boolean connect=true;
 	public int  Temp10=20;
 	public int Temp100=200;
+	private boolean go=true;
 	Timer timer1,timer2;
 	Socket requestSocket=null;//=new Socket();
 	ObjectOutputStream out;
@@ -154,13 +155,13 @@ public class RegulatorConection extends Thread  {
 	public  void run() {
 		arrayGlobal= arrayTLtopo;
 		intersectionIdGlobal=intersectionId;
-		boolean go=true;
+		go=true;
 		if (requestSocket==null){this.connect=false;}
 		while((this.connect==false) && (this.isRunning==true)){
 			try {
 				if (requestSocket==null) {System.out.println("antes do while(!connect)");
 				requestSocket = new Socket(Activator.spatRegIp, 21000);newConnection=true;}else
-					if (requestSocket.isClosed()){requestSocket = new Socket(Activator.spatRegIp, 21000);newConnection=true;}else newConnection=false;
+					if (requestSocket.isConnected()==false){requestSocket = new Socket(Activator.spatRegIp, 21000);newConnection=true;}else newConnection=false;
 				out = new ObjectOutputStream(requestSocket.getOutputStream());
 				System.out.println("conexión establecida");
 				this.connect=true;
@@ -171,7 +172,7 @@ public class RegulatorConection extends Thread  {
 			sendMessage(msg);	System.out.println("msg sent");
 			this.waitingACK=true;
 			this.waitingResponse=true;
-			}
+			}go=true;
 			while(go && this.isRunning){
 				message_end=null;
 				try {
@@ -248,4 +249,15 @@ public class RegulatorConection extends Thread  {
 		} catch (IOException ioException) {	ioException.printStackTrace();		}
 	}
 	public void close_reg(){this.isRunning=false;	close();}
+	public void close_reg_timer() throws IOException{this.go=false;
+	if (requestSocket!=null){if(requestSocket.isConnected()){
+	/**	if(Activator.denmproba==1){
+			byte[] msg0=new byte[9];
+			msg0=createPriorityPetition(801, 9, 0);
+			sendMessage(msg0);}
+		Thread.sleep(1000);**/
+		requestSocket.close();}
+	}
+	System.out.println("close thread_regulator");
+	}
 }
