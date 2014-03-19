@@ -85,9 +85,9 @@ public class RegulatorConection extends Thread  {
 			if((length-4)!=length_mes)error=1;else if(id_m!=2)error=2;
 			byte[] msg1 = createACK((byte)2,(byte)0); 
 			
-		/**	for (int i = 0; i < message1.length; i++) {
+		for (int i = 0; i < message1.length; i++) {
 				System.out.print(message1[i]+ " ");
-			}System.out.println();**/
+			}System.out.println();
 			sendMessage(msg1);
 			if (error==0){
 
@@ -187,7 +187,7 @@ public class RegulatorConection extends Thread  {
 		byte end = 0x03;
 		ByteBuffer b;
 		//byte[] idregulator=b.array();
-		int [] tlListInt1={2,3,4,5};
+		int [] tlListInt1={1,2,3,4};
 		int sizeTL = tlListInt1.length ;
 		int sizeMessage = 5 + 2 + sizeTL;
 		int sizeMessageInfo = 3 + sizeTL;

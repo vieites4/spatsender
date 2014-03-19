@@ -90,11 +90,12 @@ public class SpatGenerator extends Thread {
 
 		typeTemp element;
 		int num= th1.List_temp.size();int i=0;
-		if(th1.waitingResponse)th1.Temp100=th1.Temp100-(Integer.parseInt(Activator.spatFrequency)/100); if(th1.waitingACK)th1.Temp10=th1.Temp10-(Integer.parseInt(Activator.spatFrequency)/100);
+	/*	if(th1.waitingResponse)th1.Temp100=th1.Temp100-(Integer.parseInt(Activator.spatFrequency)/100); if(th1.waitingACK)th1.Temp10=th1.Temp10-(Integer.parseInt(Activator.spatFrequency)/100);
 		//esto estaba eliminado por funcionar mal, pero ahora lo modifiqué, a ver si funciona
 		if(th1.Temp10<=0){th1.close_reg();th1.run();th1.Temp10=10000*(1/Integer.parseInt(Activator.spatFrequency));}else
 			if(th1.Temp100<=0){th1.close_reg();th1.run();th1.Temp100=100000*(1/Integer.parseInt(Activator.spatFrequency));}
 		//
+		*/
 		List<typeTemp> clone1=th1.List_temp;
 		List<Integer> clone2=th1.List_ID;
 
@@ -137,7 +138,7 @@ public class SpatGenerator extends Thread {
 		int val=clone1.size();
 		movementstate = intersectionstate.get(0).createMovementState(val);
 		
-		System.out.println("lonxitude do movementstate"+clone1.size());
+		System.out.println("lonxitude do movementstate "+clone1.size());
 		long colortl1=0;int ii;int[] index=null;
 		for ( i = 0; i < val; i++) {
 			//	i=clone1.get(ii).ID -1;
@@ -163,7 +164,7 @@ public class SpatGenerator extends Thread {
 					int column=0;	int column1=1;	int aa=0;	int row=0;		int pos=0;**/
 			//	if(response[ii][1]== 'D'){ colortl1=0x0;}else{
 			if(response[ii][1]==82){//|| response[ii][1]== 'C'|| response[ii][1]== 'P'){
-				colortl1=1;
+				colortl1=4;
 				//	System.out.println("Entrei en V " );//+column+ " "+row);
 
 			}
@@ -173,7 +174,7 @@ public class SpatGenerator extends Thread {
 				colortl1=2;
 			}else if(response[ii][1]==86){//|| response[ii][1]== 'B'|| response[ii][1]== 'H'){
 				//	System.out.println("Entrei en R ");// +column+ " "+row);
-				colortl1=4;
+				colortl1=1;
 			} 
 			System.out.println("setMovementName"+i);
 			movementstate.get(ii).setMovementName("STATE"+"+i+");// no es necesario
