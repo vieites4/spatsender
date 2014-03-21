@@ -57,8 +57,7 @@ public class RegulatorConection extends Thread {
 			this.waitingResponse = false;
 			this.Temp100 = 500000 / (Integer.parseInt(Activator.spatFrequency));
 		}
-		boolean desired = (message[0] == 0x2) && (message[3] == 0x06)
-				&& (message[5] == 0);
+		boolean desired = (message[0] == 0x2) && (message[3] == 0x06)&& (message[5] == 0);
 
 		byte[] message1 = new byte[length];// =message;
 
