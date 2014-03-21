@@ -73,6 +73,9 @@ public class SenderThread extends Thread {
 					logger.error("SPATSender: error sending spat messages "	+ e.getMessage());
 				} catch (ValueOutOfRangeException e) {e.printStackTrace();
 				} catch (InterruptedException e) {e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}			}
 					try {
 				long timeToSleep = (long) (Double
