@@ -23,6 +23,7 @@ public class Activator implements BundleActivator {
 public static volatile String spatRegIp="195.77.187.234";
 	public static volatile String spatFrequency = "500";
 	public static volatile String spatKML = "kml/001.kml";
+	public static volatile Integer spatTimer=500000;
 
 	// SpatSender is RSU part of EEIS. Here we consult regulator about Traffic Light's colour and times. We send SPAT messages
 	//with this information to OBUs.
@@ -40,7 +41,9 @@ public static volatile String spatRegIp="195.77.187.234";
 		if (System.getProperty("spat.spatRegIp") != null) {
 			spatRegIp = System.getProperty("spat.spatRegIp");
 		}
-
+		if (System.getProperty("spat.spatTimer") != null) {
+			spatTimer = Integer.parseInt(System.getProperty("spat.spatTimer"));
+		}
 		this.senderThread = new SenderThread(paramBundleContext);
 		this.senderThread.start();
 

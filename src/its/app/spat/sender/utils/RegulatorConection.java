@@ -55,7 +55,7 @@ public class RegulatorConection extends Thread {
 			length = in.read(message);
 			System.out.println("message rx");
 			this.waitingResponse = false;
-			this.Temp100 = 500000 / (Integer.parseInt(Activator.spatFrequency));
+			this.Temp100 = Activator.spatTimer / (Integer.parseInt(Activator.spatFrequency));
 		}
 		boolean desired = (message[0] == 0x2) && (message[3] == 0x06)&& (message[5] == 0);
 
@@ -233,7 +233,7 @@ int val_len1=(int)message[ 2]&0xff;
 		}
 		while ((this.isRunning == true)) {
 			go = true;
-			Temp100=5000000*(1/Integer.parseInt(Activator.spatFrequency));
+			Temp100=Activator.spatTimer*(1/Integer.parseInt(Activator.spatFrequency));
 
 			try {
 				if (requestSocket == null) {
